@@ -28,7 +28,7 @@ def import_sensor_from_dataset_2(path):
 
 '''
 Imports the whole dataset from GNFUV
-Data contains datasets from 5 different sources
+Data contains datasets from 4 different sources
 Returns: a list with all pandas dataframes
 '''
 def import_dataset_2():
