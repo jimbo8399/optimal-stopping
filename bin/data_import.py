@@ -1,9 +1,12 @@
 import pandas as pd
 import json
+from pathlib import Path
 
-#TODO: fix paths
-PATH_DATASET_1 = "./data/DATASET-1/HT_Sensor_dataset.dat"
-PATH_DATASET_2 = "./data/DATASET-2/pi"
+proj_path = Path("/home/katya/optimal-stopping")
+data_path = proj_path / 'data'
+
+PATH_DATASET_1 = data_path / "DATASET-1/HT_Sensor_dataset.dat"
+PATH_DATASET_2 = data_path / "DATASET-2/pi"
 
 '''
 Imports a single sensor dataset from GNFUV
@@ -32,13 +35,13 @@ Data contains datasets from 4 different sources
 Returns: a list with all pandas dataframes
 '''
 def import_dataset_2():
-    df_pi2 = import_sensor_from_dataset_2(PATH_DATASET_2 + 
+    df_pi2 = import_sensor_from_dataset_2(str(PATH_DATASET_2) + 
                          "2/gnfuv-temp-exp1-55d487b85b-5g2xh_1.0.csv")
-    df_pi3 = import_sensor_from_dataset_2(PATH_DATASET_2 +
+    df_pi3 = import_sensor_from_dataset_2(str(PATH_DATASET_2) +
                          "3/gnfuv-temp-exp1-55d487b85b-2bl8b_1.0.csv")
-    df_pi4 = import_sensor_from_dataset_2(PATH_DATASET_2 +
+    df_pi4 = import_sensor_from_dataset_2(str(PATH_DATASET_2) +
                          "4/gnfuv-temp-exp1-55d487b85b-xcl97_1.0.csv")
-    df_pi5 = import_sensor_from_dataset_2(PATH_DATASET_2 +
+    df_pi5 = import_sensor_from_dataset_2(str(PATH_DATASET_2) +
                          "5/gnfuv-temp-exp1-55d487b85b-5ztk8_1.0.csv")
     return [df_pi2, df_pi3, df_pi4, df_pi5]
 
