@@ -7,11 +7,11 @@ sys.path.append(str(p))
 
 from bin.data_import import import_dataset_2 as im
 from linreg.lin_reg_model import get_linear_regression_model as get_model
-# from linreg.lin_reg_model import k_fold_cv as get_error
+from linreg.lin_reg_model import k_fold_cv as get_error
 
 W = 10 # window size
 
-sensor = im()[0]
+sensor = im()[0].iloc[:30,:]
 
 dataset_length = len(sensor)
 
@@ -28,8 +28,8 @@ r_h1 = data.humidity.values.reshape(-1,1)
 # print(data.iloc[:,2:4]) # DEBUG
 # Build a model to be sent to the Edge Gate
 model = get_model(r_t1, r_h1)
-# TODO: Evaluate the model
-# err = get_error()
+# Evaluate the model
+err = get_error(model, r_t1, r_h1)
 
 i = 1
 while (i + W) <= dataset_length:
@@ -43,8 +43,9 @@ while (i + W) <= dataset_length:
 	# Build a new model with the newly arrived datapoint 
 	# and the discarded oldest datapoint
 	new_model = get_model(r_t2, r_h2)
+	# Evaluate
+	new_err = get_error(new_model, r_t1, r_h2)
 
-	# TODO: Evaluate
-
+	print(err, new_err)
 	# Slide the window with 1
 	i += 1

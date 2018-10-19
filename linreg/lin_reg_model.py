@@ -16,13 +16,12 @@ def evaluate_lin_reg_model(model, X, y):
     mean_sq_error = np.mean(sq_errors)
     return mean_sq_error
 
-def k_fold_cv(X, y, K=6):
+def k_fold_cv(model, X, y, K=6):
     scores = []
     for k in range(K):
-        X_train, _, y_train, _ = \
+        _, X_test, _, y_test = \
             train_test_split(X, y, test_size=0.1, random_state=None)
-        model = get_linear_regression_model(X_train, y_train)
-        scores += [evaluate_lin_reg_model(model, X, y)]
+        scores += [evaluate_lin_reg_model(model, X_test, y_test)]
     return np.mean(scores)
 
 # if __name__ == "__main__":
