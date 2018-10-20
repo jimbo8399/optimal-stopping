@@ -1,12 +1,97 @@
 import pandas as pd
 import json
 from pathlib import Path
+import os
+from urllib import request
+from io import BytesIO
+from zipfile import ZipFile,ZipInfo
 
-proj_path = Path("/home/katya/optimal-stopping")
+PROJ_NAME = "optimal-stopping"
+# Locate the Project directory
+curr_dir = str(Path.cwd())
+start = curr_dir.find(PROJ_NAME)
+if start < 0:
+    print("ERROR: Project directory not found")
+    print("Make sure you have the correct project structure")
+    print("and run the simulation from within the project")
+proj_pathname = curr_dir[:(start+len(PROJ_NAME))]
+
+# Create path to the project directory
+proj_path = Path(proj_pathname)
+
+# Create path to the project data
 data_path = proj_path / 'data'
 
-PATH_DATASET_1 = data_path / "DATASET-1/HT_Sensor_dataset.dat"
-PATH_DATASET_2 = data_path / "DATASET-2/pi"
+d1_filename = "HT_Sensor_metadata.dat"
+
+PATH_DATASET_1 = data_path / "DATASET-1"
+PATH_DATASET_2 = data_path / "DATASET-2"
+
+zip_d1_path = PATH_DATASET_1/"zip_d1.zip"
+zip_d2_path = PATH_DATASET_2/"zip_d2.zip"
+
+D1_URL = "http://archive.ics.uci.edu/ml/machine-learning-databases/00362/HT_Sensor_UCIsubmission.zip"
+D2_URL = "https://archive.ics.uci.edu/ml/machine-learning-databases/00452/GNFUV%20USV%20Dataset.zip"
+
+'''
+Create data file structure
+Download the needed data
+'''
+def data_init():
+    if "data" not in os.listdir(proj_path):
+        print("Creating top directory data/")
+        os.mkdir(data_path)
+
+    '''
+    Fetching and Extracting DATASET 1 - HT Sensors
+    '''
+    if "DATASET-1" not in os.listdir(data_path):
+        print("-->Creating directory data/DATASET-1")
+        os.mkdir(PATH_DATASET_1)
+
+    if "zip_d1.zip" not in os.listdir(PATH_DATASET_1) and \
+        d1_filename not in os.listdir(PATH_DATASET_1):
+        print("-->-->Downloading data from HT Sensors inside data/DATASET-1")
+        resp = request.urlopen(D1_URL)
+        with open(zip_d1_path,"wb") as file:
+            file.write(resp.read())
+        print("-->-->Unzipping data")
+        zip_file = ZipFile(str(zip_d1_path))
+        zip_file.extract(member=d1_filename, path=str(PATH_DATASET_1))
+    elif d1_filename not in os.listdir(PATH_DATASET_1):
+        print("-->-->Unzipping data from zip_d1.zip")
+        zip_file = ZipFile(str(zip_d1_path))
+        zip_file.extract(member=d1_filename, path=str(PATH_DATASET_1))
+
+    '''
+    Fetching and extracting Dataset 2 - USV Sensors
+    '''
+    if "DATASET-2" not in os.listdir(data_path):
+        print("-->Creating directory data/DATASET-2")
+        os.mkdir(PATH_DATASET_2)
+
+    if "zip_d2.zip" not in os.listdir(PATH_DATASET_2) and \
+        ("pi2" not in os.listdir(PATH_DATASET_2) or \
+        "pi3" not in os.listdir(PATH_DATASET_2) or \
+        "pi4" not in os.listdir(PATH_DATASET_2) or \
+        "pi5" not in os.listdir(PATH_DATASET_2)):
+
+        print("-->-->Downloading data from USV Sesnors inside data/DATASET-2")
+        resp = request.urlopen(D2_URL)
+        with open(zip_d2_path,"wb") as file:
+            file.write(resp.read())
+
+        print("-->-->Unzipping data")
+        zip_file = ZipFile(str(zip_d2_path))
+        zip_file.extractall(path=str(PATH_DATASET_2))
+    elif "pi2" not in os.listdir(PATH_DATASET_2) or \
+        "pi3" not in os.listdir(PATH_DATASET_2) or \
+        "pi4" not in os.listdir(PATH_DATASET_2) or \
+        "pi5" not in os.listdir(PATH_DATASET_2):
+
+        print("-->-->Unzipping data from zip_d2.zip")
+        zip_file = ZipFile(str(zip_d2_path))
+        zip_file.extractall(path=str(PATH_DATASET_2))
 
 '''
 Imports a single sensor dataset from GNFUV
@@ -35,14 +120,14 @@ Data contains datasets from 4 different sources
 Returns: a list with all pandas dataframes
 '''
 def import_dataset_2():
-    df_pi2 = import_sensor_from_dataset_2(str(PATH_DATASET_2) + 
-                         "2/gnfuv-temp-exp1-55d487b85b-5g2xh_1.0.csv")
-    df_pi3 = import_sensor_from_dataset_2(str(PATH_DATASET_2) +
-                         "3/gnfuv-temp-exp1-55d487b85b-2bl8b_1.0.csv")
-    df_pi4 = import_sensor_from_dataset_2(str(PATH_DATASET_2) +
-                         "4/gnfuv-temp-exp1-55d487b85b-xcl97_1.0.csv")
-    df_pi5 = import_sensor_from_dataset_2(str(PATH_DATASET_2) +
-                         "5/gnfuv-temp-exp1-55d487b85b-5ztk8_1.0.csv")
+    df_pi2 = import_sensor_from_dataset_2(str(PATH_DATASET_2 / 
+                         "pi2"/"gnfuv-temp-exp1-55d487b85b-5g2xh_1.0.csv"))
+    df_pi3 = import_sensor_from_dataset_2(str(PATH_DATASET_2 /
+                         "pi3"/"gnfuv-temp-exp1-55d487b85b-2bl8b_1.0.csv"))
+    df_pi4 = import_sensor_from_dataset_2(str(PATH_DATASET_2 /
+                         "pi4"/"gnfuv-temp-exp1-55d487b85b-xcl97_1.0.csv"))
+    df_pi5 = import_sensor_from_dataset_2(str(PATH_DATASET_2 /
+                         "pi5"/"gnfuv-temp-exp1-55d487b85b-5ztk8_1.0.csv"))
     return [df_pi2, df_pi3, df_pi4, df_pi5]
 
 '''
@@ -52,10 +137,10 @@ A single dataset with the columns:
 Return: pandas dataframe
 '''
 def import_dataset_1():
-    with open(PATH_DATASET_1, "r") as file:
+    with open(PATH_DATASET_1/"HT_Sensor_dataset.dat", "r") as file:
         columns = next(file).split()
         df = pd.read_csv(file,names=columns,delim_whitespace=True)
     return df
 
 # if __name__=="__main__":
-#     import_dataset_2()
+#     data_init(proj_path)

@@ -2,21 +2,40 @@
 import sys
 from pathlib import Path
 
-p = Path("/home/katya/optimal-stopping")
-sys.path.append(str(p))
+PROJ_NAME = "optimal-stopping"
 
+# Locate the Project directory
+curr_dir = str(Path.cwd())
+start = curr_dir.find(PROJ_NAME)
+if start < 0:
+	print("ERROR: Project directory not found")
+	print("Make sure you have the correct project structure")
+	print("and run the simulation from within the project")
+proj_pathname = curr_dir[:(start+len(PROJ_NAME))]
+
+# Create path to the project directory
+proj_path = Path(proj_pathname)
+
+# Add the bin folder to PATH
+bin_path = proj_path / "bin"
+sys.path.append(proj_pathname)
+
+from bin.data_import import data_init
 from bin.data_import import import_dataset_2 as im
 from linreg.lin_reg_model import get_linear_regression_model as get_model
 from linreg.lin_reg_model import k_fold_cv as get_error
 
 W = 10 # window size
 
+# Initialising data structure
+data_init()
+# Import data from Dataset 2
 sensor = im()[0].iloc[:30,:]
 
 dataset_length = len(sensor)
 
 if dataset_length<10:
-	print("unsofficient amount of data")
+	print("insufficient amount of data")
 	exit(1)
 
 print("Epoch 0 ,window",0, 0+W)
