@@ -22,6 +22,9 @@ proj_path = Path(proj_pathname)
 # Create path to the project data
 data_path = proj_path / 'data'
 
+# Create path to the project results
+results_path = proj_path / 'results'
+
 d1_filename = "HT_Sensor_metadata.dat"
 
 PATH_DATASET_1 = data_path / "DATASET-1"
@@ -41,6 +44,9 @@ def data_init():
     if "data" not in os.listdir(proj_path):
         print("Creating top directory data/")
         os.mkdir(data_path)
+    if "results" not in os.listdir(proj_path):
+        print("Creating top directory results/")
+        os.mkdir(results_path)
 
     '''
     Fetching and Extracting DATASET 1 - HT Sensors
