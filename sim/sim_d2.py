@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import sys
 from pathlib import Path
+import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.lines as lines
 
 PROJ_NAME = "optimal-stopping"
 
@@ -35,7 +37,7 @@ sensor_names = ["pi2","pi3","pi4","pi5"]
 # Import data from each Dataset, USV=pi2, pi3, pi4, pi5
 # Getting only 100 datapoints
 for sensor_ind in range(len(all_sensors)):
-	sensor = all_sensors[sensor_ind]#.iloc[:50,:]
+	sensor = all_sensors[sensor_ind].iloc[:50,:]
 
 	dataset_length = len(sensor)
 
@@ -43,7 +45,7 @@ for sensor_ind in range(len(all_sensors)):
 		print("insufficient amount of data")
 		exit(1)
 
-	print("Epoch 0 ,window",0, 0+W)
+	#print("Epoch 0 ,window",0, 0+W)
 	data = sensor.iloc[0:W,:]
 	# Reshape the temperature values
 	r_t1 = data.temperature.values.reshape(-1,1)
@@ -56,12 +58,14 @@ for sensor_ind in range(len(all_sensors)):
 	err = get_error(model, r_t1, r_h1)
 
 	err_diff = []
+	err_storage = [err]
+	init_err = err
 
 	i = 1
 	while (i + W) <= dataset_length:
 		# Receive a new datapoint
-		print()
-		print("Epoch",i,",window",i, i+W)
+		# print()
+		# print("Epoch",i,",window",i, i+W)
 		data = sensor.iloc[i:i+W,:]
 		# print(data.iloc[:,2:4]) # DEBUG
 		r_t2 = data.temperature.values.reshape(-1,1)
@@ -71,20 +75,50 @@ for sensor_ind in range(len(all_sensors)):
 		new_model = get_model(r_t2, r_h2)
 		# Evaluate
 		new_err = get_error(new_model, r_t1, r_h2)
+		err_storage += [new_err]
 
 		err_diff += [abs(err-new_err)]
 
-		print(err, new_err)
-		print(err_diff[-1])
+		# print(err, new_err)
+		# print(err_diff[-1])
 		# Slide the window with 1
 		i += 1
 
+	'''
+	Plot Error rate window
+	'''
 	fig, ax = plt.subplots()
+	ax.grid(True)
+	ax.set_xticks(tuple(range(1,len(err_storage)+1,2)))
 	
-	plt.plot(range(len(err_diff)), err_diff, fillstyle='bottom')
+	plt.plot(range(1,len(err_diff)+1), err_diff, fillstyle='bottom')
 
-	plt.xlabel("Window sequence")
-	plt.ylabel("Error rate, |e-e'|")
+	plt.xlim(left=0)
+	plt.ylim(bottom=0)
+	
+	plt.xlabel("Window index")
+	plt.ylabel("Error rate difference, |e-e'|")
 	plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w=10")
 
-	plt.savefig('results/abs_err_diff_'+sensor_names[sensor_ind]+".png")
+	plt.savefig('results/abs_err_diff_'+sensor_names[sensor_ind]+'_w_'+str(W)+'.png')
+
+	'''
+	Plot both error rates
+	'''
+	fig, ax = plt.subplots()
+	
+	plt.plot(range(1,len(err_storage)), err_storage[1:], fillstyle='bottom')
+	
+	ax.hlines(init_err,0,len(err_storage)-1,colors='r')
+	props = dict(boxstyle='round', facecolor='white')
+	ax.text(len(err_storage)-0.5,init_err,str(init_err)[:4],va='center', color='r', bbox=props)
+	ax.grid(True)
+	ax.set_xticks(range(0,len(err_storage)+1,2))
+	
+	plt.xlim(left=0)
+	plt.ylim(bottom=0)
+	plt.xlabel("Window index")
+	plt.ylabel("Error rate, e")
+	plt.title("Error rate increase/decrease compared\nto initial error rate for SUV sensor ["+sensor_names[sensor_ind]+"], w=10")
+	
+	plt.savefig('results/err_rates_'+sensor_names[sensor_ind]+'_w_'+str(W)+'.png')
