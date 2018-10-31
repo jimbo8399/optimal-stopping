@@ -28,7 +28,7 @@ from bin.data_import import import_dataset_2 as im
 from linreg.lin_reg_model import get_linear_regression_model as get_model
 from linreg.lin_reg_model import k_fold_cv as get_error
 
-W = 10 # window size
+W = 30 # window size
 
 # Initialising data structure
 data_init()
@@ -98,7 +98,7 @@ for sensor_ind in range(len(all_sensors)):
 	
 	plt.xlabel("Window index")
 	plt.ylabel("Error rate difference, |e-e'|")
-	plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w=10")
+	plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W))
 
 	plt.savefig('results/abs_err_diff_'+sensor_names[sensor_ind]+'_w_'+str(W)+'.png')
 
@@ -119,6 +119,6 @@ for sensor_ind in range(len(all_sensors)):
 	plt.ylim(bottom=0)
 	plt.xlabel("Window index")
 	plt.ylabel("Error rate, e")
-	plt.title("Error rate increase/decrease compared\nto initial error rate for SUV sensor ["+sensor_names[sensor_ind]+"], w=10")
+	plt.title("Error rate increase/decrease compared\nto initial error rate for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W))
 	
 	plt.savefig('results/err_rates_'+sensor_names[sensor_ind]+'_w_'+str(W)+'.png')
