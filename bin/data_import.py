@@ -47,6 +47,12 @@ def data_init():
     if "results" not in os.listdir(proj_path):
         print("Creating top directory results/")
         os.mkdir(results_path)
+    if "dataset_1_rbf_svr" not in os.listdir(results_path):
+        print("Creating top directory results/dataset_1_rbf_svr")
+        os.mkdir(results_path/"dataset_1_rbf_svr")
+    if "dataset_2_lin_reg" not in os.listdir(results_path):
+        print("Creating top directory results/dataset_2_lin_reg")
+        os.mkdir(results_path/"dataset_2_lin_reg")
 
     '''
     Fetching and Extracting DATASET 1 - HT Sensors

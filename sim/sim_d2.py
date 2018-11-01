@@ -28,20 +28,20 @@ from bin.data_import import import_dataset_2 as im
 from linreg.lin_reg_model import get_linear_regression_model as get_model
 from linreg.lin_reg_model import k_fold_cv as get_error
 
-W = 30 # window size
+W = int(sys.argv[1]) # window size
 
 # Initialising data structure
 data_init()
 all_sensors = im()
 sensor_names = ["pi2","pi3","pi4","pi5"]
 # Import data from each Dataset, USV=pi2, pi3, pi4, pi5
-# Getting only 100 datapoints
+# Getting only 60 datapoints
 for sensor_ind in range(len(all_sensors)):
-	sensor = all_sensors[sensor_ind].iloc[:50,:]
+	sensor = all_sensors[sensor_ind].iloc[:60,:]
 
 	dataset_length = len(sensor)
 
-	if dataset_length<10:
+	if dataset_length<W:
 		print("insufficient amount of data")
 		exit(1)
 
@@ -51,7 +51,6 @@ for sensor_ind in range(len(all_sensors)):
 	r_t1 = data.temperature.values.reshape(-1,1)
 	# Reshape the humidity values
 	r_h1 = data.humidity.values.reshape(-1,1)
-	# print(data.iloc[:,2:4]) # DEBUG
 	# Build a model to be sent to the Edge Gate
 	model = get_model(r_t1, r_h1)
 	# Evaluate the model
@@ -74,7 +73,7 @@ for sensor_ind in range(len(all_sensors)):
 		# and the discarded oldest datapoint
 		new_model = get_model(r_t2, r_h2)
 		# Evaluate
-		new_err = get_error(new_model, r_t1, r_h2)
+		new_err = get_error(new_model, r_t1, r_h1)
 		err_storage += [new_err]
 
 		err_diff += [abs(err-new_err)]
@@ -85,7 +84,7 @@ for sensor_ind in range(len(all_sensors)):
 		i += 1
 
 	'''
-	Plot Error rate window
+	Plot Error rate difference
 	'''
 	fig, ax = plt.subplots()
 	ax.grid(True)
@@ -98,20 +97,22 @@ for sensor_ind in range(len(all_sensors)):
 	
 	plt.xlabel("Window index")
 	plt.ylabel("Error rate difference, |e-e'|")
-	plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W))
+	plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression")
 
-	plt.savefig('results/abs_err_diff_'+sensor_names[sensor_ind]+'_w_'+str(W)+'.png')
+	plt.tight_layout()
+
+	plt.savefig('results/dataset_2_lin_reg/abs_err_diff_'+sensor_names[sensor_ind]+'_w_'+str(W)+'.png')
 
 	'''
-	Plot both error rates
+	Plot all error rates
 	'''
 	fig, ax = plt.subplots()
 	
-	plt.plot(range(1,len(err_storage)), err_storage[1:], fillstyle='bottom')
+	plt.plot(range(0,len(err_storage)), err_storage[0:], fillstyle='bottom')
 	
 	ax.hlines(init_err,0,len(err_storage)-1,colors='r')
 	props = dict(boxstyle='round', facecolor='white')
-	ax.text(len(err_storage)-0.5,init_err,str(init_err)[:4],va='center', color='r', bbox=props)
+	ax.text(len(err_storage)-0.5,init_err,"{0:f}".format(init_err),va='center', color='r', bbox=props)
 	ax.grid(True)
 	ax.set_xticks(range(0,len(err_storage)+1,2))
 	
@@ -119,6 +120,8 @@ for sensor_ind in range(len(all_sensors)):
 	plt.ylim(bottom=0)
 	plt.xlabel("Window index")
 	plt.ylabel("Error rate, e")
-	plt.title("Error rate increase/decrease compared\nto initial error rate for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W))
+	plt.title("Error rate increase/decrease compared\nto initial error rate for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression")
 	
-	plt.savefig('results/err_rates_'+sensor_names[sensor_ind]+'_w_'+str(W)+'.png')
+	plt.tight_layout()
+
+	plt.savefig('results/dataset_2_lin_reg/err_rates_'+sensor_names[sensor_ind]+'_w_'+str(W)+'.png')
