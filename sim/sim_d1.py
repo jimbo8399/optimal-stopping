@@ -25,11 +25,18 @@ sys.path.append(proj_pathname)
 
 from bin.data_import import data_init
 from bin.data_import import import_dataset_1 as im
-from svr.svr_rbf_model import get_svr_rbf_model as get_model
-from svr.svr_rbf_model import k_fold_cv as get_error
+from svr.svr_model import k_fold_cv as get_error
 
 W = int(sys.argv[1]) # window size
 S = sys.argv[2] # sensor name, choices: R1- R8
+if sys.argv[3]=='lin':
+	kernel_name = 'Linear'
+	kernel_dir = 'lin'
+	from svr.svr_model import get_svr_lin_model as get_model
+elif sys.argv[3]=='rbf':
+	kernel_name = 'RBF'
+	kernel_dir = 'rbf'
+	from svr.svr_model import get_svr_rbf_model as get_model
 
 # Initialising data structure
 data_init()
@@ -96,11 +103,11 @@ plt.xlabel("Window index")
 plt.ylabel("Error rate difference, |e-e'|")
 plt.title("Absolute error difference for HT sensor system,"+ \
 	" s="+ S +", w="+str(W)+\
-	",\nusing Support Vector Regression with RBF Kernel")
+	",\nusing Support Vector Regression with "+kernel_name+" Kernel")
 
 plt.tight_layout()
 
-plt.savefig('results/dataset_1_rbf_svr/abs_err_diff_'+ S +'_w_'+str(W)+'.png')
+plt.savefig('results/dataset_1_'+kernel_dir+'_svr/abs_err_diff_'+ S +'_w_'+str(W)+'.png')
 
 '''
 Plot all error rates
@@ -123,9 +130,9 @@ plt.ylabel("Error rate, e")
 plt.title("Error rate increase/decrease compared\n"+\
 	"to initial error rate for HT sensor system,"+\
 	" s="+ S +", w="+str(W)+\
-	",\nusing Support Vector Regression with RBF Kernel")
+	",\nusing Support Vector Regression with "+kernel_name+" Kernel")
 
 plt.tight_layout()
 
-plt.savefig('results/dataset_1_rbf_svr/err_rates_'+ S +\
+plt.savefig('results/dataset_1_'+kernel_dir+'_svr/err_rates_'+ S +\
 	'_w_'+str(W)+'.png')
