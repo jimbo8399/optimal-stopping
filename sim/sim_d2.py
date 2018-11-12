@@ -39,7 +39,7 @@ sensor_names = ["pi2","pi3","pi4","pi5"]
 # Import data from each Dataset, USV=pi2, pi3, pi4, pi5
 # Getting only 60 datapoints
 for sensor_ind in range(len(all_sensors)):
-    sensor = all_sensors[sensor_ind].iloc[:60,:]
+    sensor = all_sensors[sensor_ind].iloc[:200,:]
 
     dataset_length = len(sensor)
 
@@ -110,7 +110,7 @@ for sensor_ind in range(len(all_sensors)):
     '''
     fig, ax = plt.subplots()
 
-    n, bins, patches = ax.hist(err_diff,color='xkcd:azure',bins=30, edgecolor='black')
+    n, bins, patches = ax.hist(err_diff,color='xkcd:azure',bins=(200-W)//2, edgecolor='black')
 
     median = np.median(err_diff)
 
