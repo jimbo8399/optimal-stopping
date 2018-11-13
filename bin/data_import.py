@@ -41,18 +41,39 @@ Create data file structure
 Download the needed data
 '''
 def data_init():
+    POLICIES = ['policyE','policyN', 'policyM', 'policyA', 'policyC', 'policyR']
+    '''Data'''
     if "data" not in os.listdir(proj_path):
         print("Creating top directory data/")
         os.mkdir(data_path)
+    '''Results'''
     if "results" not in os.listdir(proj_path):
         print("Creating top directory results/")
         os.mkdir(results_path)
+    '''Results rbf svr'''
     if "dataset_1_rbf_svr" not in os.listdir(results_path):
-        print("Creating top directory results/dataset_1_rbf_svr")
+        print("Creating directory results/dataset_1_rbf_svr")
         os.mkdir(results_path/"dataset_1_rbf_svr")
+    for pol in POLICIES:
+        if pol not in os.listdir(results_path/"dataset_1_rbf_svr"):
+            print("Creating directory results/dataset_1_rbf_svr/"+pol)
+            os.mkdir(results_path/"dataset_1_rbf_svr"/pol)
+    '''Results lin svr'''
+    if "dataset_1_lin_svr" not in os.listdir(results_path):
+        print("Creating directory results/dataset_1_lin_svr")
+        os.mkdir(results_path/"dataset_1_lin_svr")
+    for pol in POLICIES:
+        if pol not in os.listdir(results_path/"dataset_1_lin_svr"):
+            print("Creating directory results/dataset_1_lin_svr/"+pol)
+            os.mkdir(results_path/"dataset_1_lin_svr"/pol)
+    '''Results lin reg'''
     if "dataset_2_lin_reg" not in os.listdir(results_path):
-        print("Creating top directory results/dataset_2_lin_reg")
+        print("Creating directory results/dataset_2_lin_reg")
         os.mkdir(results_path/"dataset_2_lin_reg")
+    for pol in POLICIES:
+        if pol not in os.listdir(results_path/"dataset_2_lin_reg"):
+            print("Creating directory results/dataset_2_lin_reg/"+pol)
+            os.mkdir(results_path/"dataset_2_lin_reg"/pol)
 
     '''
     Fetching and Extracting DATASET 1 - HT Sensors
