@@ -27,6 +27,9 @@ from bin.data_import import import_dataset_1 as im
 from svr.svr_model import k_fold_cv as get_error
 from policies.policy import *
 
+# 100 datapoints are used for the median delay policy, 
+# and all policies start using the data from the 100th datapoint
+SIZE = 300
 W = int(sys.argv[1]) # window size
 S = sys.argv[2] # sensor name, choices: R1- R8
 if sys.argv[3]=='lin':
@@ -47,11 +50,11 @@ if not callable(applyPolicy):
 
 # Initialising data structure
 data_init()
-sensor_dataset = im().iloc[0:200,:]
+sensor_dataset = im().iloc[0:SIZE,:]
 
 dataset_length = len(sensor_dataset)
 
-if dataset_length<W:
+if dataset_length<100+W:
 	print("insufficient amount of data")
 	exit(1)
 
@@ -62,9 +65,10 @@ def getNewY(data, S):
 	return data[[S]].values
 
 if policyName=="policyM":
-	err_diff, err_storage, init_err = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, alpha=0.5)
+	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, alpha=0.5)
 else:
-	err_diff, err_storage, init_err = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)
+	sensor_dataset = im().iloc[100:SIZE,:]
+	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)
 
 '''
 Plot Error rate difference

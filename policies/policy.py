@@ -19,6 +19,10 @@ def policyN(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 	err_storage = [err]
 	init_err = err
 	init_model = model
+
+	comm_count = 1
+	comm = [comm_count]
+
 	dataset_length = len(sensor_dataset)
 	i = 1
 	while (i + W) <= dataset_length:
@@ -39,7 +43,7 @@ def policyN(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 		# Slide the window with 1
 		i += 1
 
-	return err_diff, err_storage, init_err
+	return err_diff, err_storage, init_err, comm
 
 '''
 Policy E: always send the model
@@ -60,6 +64,10 @@ def policyE(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 	err_storage = [err]
 	init_err = err
 	init_model = model
+
+	comm_count = 1
+	comm = [comm_count]
+
 	dataset_length = len(sensor_dataset)
 	i = 1
 	while (i + W) <= dataset_length:
@@ -78,18 +86,27 @@ def policyE(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 		err_diff += [abs(init_model_err-new_err)]
 		
 		init_model = new_model
-		# init_X = X
-		# init_y = y
+		comm_count+=1
+		comm += [comm_count]
 
 		# Slide the window with 1
 		i += 1
 
-	return err_diff, err_storage, init_err
+	return err_diff, err_storage, init_err, comm
 
 '''
 Policy M: send model only when error diff is above the median error of first 100 error diffs
 '''
 def policyM(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", alpha=0.5):
+	if len(sensor_dataset) < 100:
+		print("Insufficient ammount of data to compute the error rate median, has to be at least 100 datapoints")
+		exit(0)
+	else:
+		errors, _, _, _ = policyN(W, sensor_dataset.iloc[0:100,:], get_model, get_error, getNewX, getNewY, S)
+	median = np.median(errors)
+
+	sensor_dataset = sensor_dataset.iloc[100:,:]
+
 	data = sensor_dataset.iloc[0:W,:]
 
 	# Reshape the temperature and humidity values
@@ -105,14 +122,18 @@ def policyM(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", a
 	err_storage = [err]
 	init_err = err
 	init_model = model
-	if len(sensor_dataset) < 100:
-		errors, _, _ = policyN(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)
-	else:
-		errors, _, _ = policyN(W, sensor_dataset.iloc[0:100,:], get_model, get_error, getNewX, getNewY, S)
-	median = np.median(errors)
+
+	comm_count = 1
+	comm = [comm_count]
+
 	dataset_length = len(sensor_dataset)
 	i = 1
 	while (i + W) <= dataset_length:
+
+		#Update median every 100 datapoints
+		if i%100==0:
+			median = np.median(err_storage[-100:])
+
 		# Receive a new datapoint
 		data = sensor_dataset.iloc[i:i+W,:]
 		X = getNewX(data)
@@ -129,13 +150,13 @@ def policyM(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", a
 		err_diff += [diff]
 		if diff > median*alpha:
 			init_model = new_model
-			# init_X = X
-			# init_y = y
+			comm_count += 1
+		comm += [comm_count]
 
 		# Slide the window with 1
 		i += 1
 
-	return err_diff, err_storage, init_err
+	return err_diff, err_storage, init_err, comm
 
 '''
 Policy A: send model only when the new model is more accurate than the one at the edge gate
@@ -156,6 +177,10 @@ def policyA(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 	err_storage = [err]
 	init_err = err
 	init_model = model
+
+	comm_count = 1
+	comm = [comm_count]
+
 	dataset_length = len(sensor_dataset)
 	i = 1
 	while (i + W) <= dataset_length:
@@ -175,13 +200,13 @@ def policyA(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 		err_diff += [diff]
 		if init_model_err > new_err:
 			init_model = new_model
-			# init_X = X
-			# init_y = y
+			comm_count += 1
+		comm += [comm_count]
 
 		# Slide the window with 1
 		i += 1
 
-	return err_diff, err_storage, init_err
+	return err_diff, err_storage, init_err, comm
 
 def policyC():
 	return 0
@@ -205,6 +230,10 @@ def policyR(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 	err_storage = [err]
 	init_err = err
 	init_model = model
+
+	comm_count = 1
+	comm = [comm_count]
+
 	dataset_length = len(sensor_dataset)
 	# Generate a list of random length with random unique waiting times
 	random_waiting = set(np.random.randint(1+W, dataset_length, 10))
@@ -225,10 +254,10 @@ def policyR(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 		err_diff += [abs(init_model_err-new_err)]
 		if i in random_waiting:
 			init_model = new_model
-			# init_X = X
-			# init_y = y
+			comm_count += 1
+		comm += [comm_count]
 
 		# Slide the window with 1
 		i += 1
 
-	return err_diff, err_storage, init_err
+	return err_diff, err_storage, init_err, comm

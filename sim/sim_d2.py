@@ -29,6 +29,7 @@ from linreg.lin_reg_model import get_linear_regression_model as get_model
 from linreg.lin_reg_model import k_fold_cv as get_error
 from policies.policy import *
 
+SIZE = 300
 W = int(sys.argv[1]) # window size
 policies = {"policyE":policyE, "policyN":policyN, "policyM":policyM, "policyA":policyA, "policyC":policyC, "policyR":policyR}
 policyName = sys.argv[2]
@@ -44,7 +45,7 @@ sensor_names = ["pi2","pi3","pi4","pi5"]
 # Import data from each Dataset, USV=pi2, pi3, pi4, pi5
 # Getting only 60 datapoints
 for sensor_ind in range(len(all_sensors)):
-    sensor = all_sensors[sensor_ind].iloc[:200,:]
+    sensor = all_sensors[sensor_ind].iloc[:SIZE,:]
 
     dataset_length = len(sensor)
 
@@ -59,9 +60,10 @@ for sensor_ind in range(len(all_sensors)):
         return data.humidity.values.reshape(-1,1)
 
     if policyName=="policyM":
-        err_diff, err_storage, init_err = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, alpha=1)
+        err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, alpha=1)
     else:
-        err_diff, err_storage, init_err = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY)
+        sensor = all_sensors[sensor_ind].iloc[100:SIZE,:]
+        err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY)
 
     '''
     Plot Error rate difference
