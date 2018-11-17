@@ -29,7 +29,7 @@ from policies.policy import *
 
 # 100 datapoints are used for the median delay policy, 
 # and all policies start using the data from the 100th datapoint
-SIZE = 300
+SIZE = 200
 W = int(sys.argv[1]) # window size
 S = sys.argv[2] # sensor name, choices: R1- R8
 if sys.argv[3]=='lin':
@@ -73,17 +73,23 @@ else:
 '''
 Plot Error rate difference
 '''
-fig, ax = plt.subplots()
-ax.grid(True)
-ax.set_xticks(tuple([1]+list(range(15,len(err_storage)+15,15))))
+fig, ax1 = plt.subplots()
+ax1.grid(True)
+ax1.set_xticks(tuple([1]+list(range(15,len(err_storage)+15,15))))
+ax1.tick_params(axis="y", labelcolor="C0")
+ax1.plot(range(1,len(err_diff)+1), err_diff, fillstyle='bottom')
 
-plt.plot(range(1,len(err_diff)+1), err_diff, fillstyle='bottom')
+# instantiate a second axes that shares the same x-axis
+ax2 = ax1.twinx() 
+ax2.tick_params(axis="y", labelcolor="xkcd:red orange")
+ax2.plot(range(0,len(comm)), comm, fillstyle='bottom', color="xkcd:red orange")
 
 plt.xlim(left=0)
 plt.ylim(bottom=0)
 
 plt.xlabel("Window index")
-plt.ylabel("Error rate difference, |e-e'|")
+ax1.set_ylabel("Error rate difference, |e-e'|", color="C0")
+ax2.set_ylabel('Communication rate', color="xkcd:red orange")
 plt.title("Absolute error difference for HT sensor system,"+ \
 	" s="+ S +", w="+str(W)+\
 	",\nusing Support Vector Regression with "+kernel_name+" Kernel and "+policyName)

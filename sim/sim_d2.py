@@ -29,7 +29,7 @@ from linreg.lin_reg_model import get_linear_regression_model as get_model
 from linreg.lin_reg_model import k_fold_cv as get_error
 from policies.policy import *
 
-SIZE = 300
+SIZE = 200
 W = int(sys.argv[1]) # window size
 policies = {"policyE":policyE, "policyN":policyN, "policyM":policyM, "policyA":policyA, "policyC":policyC, "policyR":policyR}
 policyName = sys.argv[2]
@@ -68,17 +68,23 @@ for sensor_ind in range(len(all_sensors)):
     '''
     Plot Error rate difference
     '''
-    fig, ax = plt.subplots()
-    ax.grid(True)
-    ax.set_xticks(tuple(range(1,len(err_storage)+15,15)))
-  
-    plt.plot(range(1,len(err_diff)+1), err_diff, fillstyle='bottom')
+    fig, ax1 = plt.subplots()
+    ax1.grid(True)
+    ax1.set_xticks(tuple(range(1,len(err_storage)+15,15)))
+    ax1.tick_params(axis="y", labelcolor="b")
+    ax1.plot(range(1,len(err_diff)+1), err_diff, fillstyle='bottom')
+
+    # instantiate a second axes that shares the same x-axis
+    ax2 = ax1.twinx() 
+    ax2.tick_params(axis="y", labelcolor="xkcd:red orange")
+    ax2.plot(range(0,len(comm)), comm, fillstyle='bottom', color="xkcd:red orange")
 
     plt.xlim(left=0)
     plt.ylim(bottom=0)
   
     plt.xlabel("Window index")
-    plt.ylabel("Error rate difference, |e-e'|")
+    ax1.set_ylabel("Error rate difference, |e-e'|", color="b")
+    ax2.set_ylabel('Communication rate', color="xkcd:red orange")
     plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression and "+policyName)
 
     plt.tight_layout()
@@ -127,7 +133,7 @@ for sensor_ind in range(len(all_sensors)):
     props = dict(boxstyle='round', facecolor='white')
     ax.text(len(err_storage)-0.5,init_err,"{0:f}".format(init_err),va='center', color='r', bbox=props)
     ax.grid(True)
-    ax.set_xticks(tuple(range(0,len(err_storage)+1,2)))
+    ax.set_xticks(tuple(range(1,len(err_storage)+15,15)))
   
     plt.xlim(left=0)
     plt.ylim(bottom=0)
