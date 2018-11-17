@@ -18,6 +18,7 @@ def policyN(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 	err_diff = []
 	err_storage = [err]
 	init_err = err
+	init_model = model
 	dataset_length = len(sensor_dataset)
 	i = 1
 	while (i + W) <= dataset_length:
@@ -29,10 +30,11 @@ def policyN(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 		# and the discarded oldest datapoint
 		new_model = get_model(X, y)
 		# Evaluate
-		new_err = get_error(new_model, init_X, init_y)
+		new_err = get_error(new_model, X, y)
 		err_storage += [new_err]
 
-		err_diff += [abs(init_err-new_err)]
+		init_model_err = get_error(init_model, X, y)
+		err_diff += [abs(init_model_err-new_err)]
 
 		# Slide the window with 1
 		i += 1
@@ -57,6 +59,7 @@ def policyE(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 	err_diff = []
 	err_storage = [err]
 	init_err = err
+	init_model = model
 	dataset_length = len(sensor_dataset)
 	i = 1
 	while (i + W) <= dataset_length:
@@ -68,13 +71,15 @@ def policyE(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 		# and the discarded oldest datapoint
 		new_model = get_model(X, y)
 		# Evaluate
-		new_err = get_error(new_model, init_X, init_y)
+		new_err = get_error(new_model, X, y)
 		err_storage += [new_err]
 
-		err_diff += [abs(init_err-new_err)]
-		init_err = new_err
-		init_X = X
-		init_y = y
+		init_model_err = get_error(init_model, X, y)
+		err_diff += [abs(init_model_err-new_err)]
+		
+		init_model = new_model
+		# init_X = X
+		# init_y = y
 
 		# Slide the window with 1
 		i += 1
@@ -84,7 +89,7 @@ def policyE(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 '''
 Policy M: send model only when error diff is above the median error of first 100 error diffs
 '''
-def policyM(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
+def policyM(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", alpha=0.5):
 	data = sensor_dataset.iloc[0:W,:]
 
 	# Reshape the temperature and humidity values
@@ -99,6 +104,7 @@ def policyM(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 	err_diff = []
 	err_storage = [err]
 	init_err = err
+	init_model = model
 	if len(sensor_dataset) < 100:
 		errors, _, _ = policyN(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)
 	else:
@@ -115,15 +121,16 @@ def policyM(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 		# and the discarded oldest datapoint
 		new_model = get_model(X, y)
 		# Evaluate
-		new_err = get_error(new_model, init_X, init_y)
+		new_err = get_error(new_model, X, y)
 		err_storage += [new_err]
 
-		diff = abs(init_err-new_err)
+		init_model_err = get_error(init_model, X, y)
+		diff = abs(init_model_err-new_err)
 		err_diff += [diff]
-		if diff > median:
-			init_err = new_err
-			init_X = X
-			init_y = y
+		if diff > median*alpha:
+			init_model = new_model
+			# init_X = X
+			# init_y = y
 
 		# Slide the window with 1
 		i += 1
@@ -148,6 +155,7 @@ def policyA(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 	err_diff = []
 	err_storage = [err]
 	init_err = err
+	init_model = model
 	dataset_length = len(sensor_dataset)
 	i = 1
 	while (i + W) <= dataset_length:
@@ -159,15 +167,16 @@ def policyA(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 		# and the discarded oldest datapoint
 		new_model = get_model(X, y)
 		# Evaluate
-		new_err = get_error(new_model, init_X, init_y)
+		new_err = get_error(new_model, X, y)
 		err_storage += [new_err]
 
-		diff = abs(init_err-new_err)
+		init_model_err = get_error(init_model, X, y)
+		diff = abs(init_model_err-new_err)
 		err_diff += [diff]
-		if init_err > new_err:
-			init_err = new_err
-			init_X = X
-			init_y = y
+		if init_model_err > new_err:
+			init_model = new_model
+			# init_X = X
+			# init_y = y
 
 		# Slide the window with 1
 		i += 1
@@ -195,6 +204,7 @@ def policyR(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 	err_diff = []
 	err_storage = [err]
 	init_err = err
+	init_model = model
 	dataset_length = len(sensor_dataset)
 	# Generate a list of random length with random unique waiting times
 	random_waiting = set(np.random.randint(1+W, dataset_length, 10))
@@ -208,14 +218,15 @@ def policyR(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 		# and the discarded oldest datapoint
 		new_model = get_model(X, y)
 		# Evaluate
-		new_err = get_error(new_model, init_X, init_y)
+		new_err = get_error(new_model, X, y)
 		err_storage += [new_err]
 
-		err_diff += [abs(init_err-new_err)]
+		init_model_err = get_error(init_model, X, y)
+		err_diff += [abs(init_model_err-new_err)]
 		if i in random_waiting:
-			init_err = new_err
-			init_X = X
-			init_y = y
+			init_model = new_model
+			# init_X = X
+			# init_y = y
 
 		# Slide the window with 1
 		i += 1

@@ -61,8 +61,10 @@ def getNewX(data):
 def getNewY(data, S):
 	return data[[S]].values
 
-
-err_diff, err_storage, init_err = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)
+if policyName=="policyM":
+	err_diff, err_storage, init_err = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, alpha=0.5)
+else:
+	err_diff, err_storage, init_err = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)
 
 '''
 Plot Error rate difference
@@ -89,58 +91,58 @@ plt.savefig('results/dataset_1_'+kernel_dir+'_svr/'+policyName+'/abs_err_diff_'+
 '''
 Plot histogram of |e-e'|
 '''
-# fig, ax = plt.subplots()
+fig, ax = plt.subplots()
 
-# n, bins, patches = ax.hist(err_diff,color='xkcd:azure',bins=(200-W)//2, edgecolor='black')
+n, bins, patches = ax.hist(err_diff,color='xkcd:azure',bins=(200-W)//2, edgecolor='black')
 
-# median = np.median(err_diff)
+median = np.median(err_diff)
 
-# props = dict(boxstyle='round', facecolor='white')
-# for i in range(1,len(patches)):
-#     if patches[i-1].xy[0]<=median and median<patches[i].xy[0]:
-#         patches[i-1].set_color('xkcd:banana')
-#         patches[i-1].set_edgecolor('black')
-#         patches[i-1].set_hatch('/')
-#         ax.text(patches[i-1].xy[0]+patches[i-1].get_width()/2,n[i-1],"median:\n{0:1.6f}".format(median),va='center', color='r', bbox=props)
-# if patches[i].xy[0]<=median:
-#     patches[i].set_color('xkcd:banana')
-#     patches[i].set_edgecolor('black')
-#     patches[i].set_hatch('/')
-#     ax.text(patches[i].xy[0]+patches[i].get_width()/2,n[i-1],"median:\n{0:1.6f}".format(median),va='center', color='r', bbox=props)
+props = dict(boxstyle='round', facecolor='white')
+for i in range(1,len(patches)):
+    if patches[i-1].xy[0]<=median and median<patches[i].xy[0]:
+        patches[i-1].set_color('xkcd:banana')
+        patches[i-1].set_edgecolor('black')
+        patches[i-1].set_hatch('/')
+        ax.text(patches[i-1].xy[0]+patches[i-1].get_width()/2,n[i-1],"median:\n{0:1.6f}".format(median),va='center', color='r', bbox=props)
+if patches[i].xy[0]<=median:
+    patches[i].set_color('xkcd:banana')
+    patches[i].set_edgecolor('black')
+    patches[i].set_hatch('/')
+    ax.text(patches[i].xy[0]+patches[i].get_width()/2,n[i-1],"median:\n{0:1.6f}".format(median),va='center', color='r', bbox=props)
 
-# plt.xlabel("Error rate difference, |e-e'|")
-# plt.ylabel("Frequency")
-# plt.title("Absolute error difference for SUV sensor ["+S\
-#     +"], w="+str(W)+",\nusing Support Vector Regression with "+kernel_name+" Kernel\nand the corresponding median for the data")
+plt.xlabel("Error rate difference, |e-e'|")
+plt.ylabel("Frequency")
+plt.title("Absolute error difference for SUV sensor ["+S\
+    +"], w="+str(W)+",\nusing Support Vector Regression with "+kernel_name+" Kernel\nand the corresponding median for the data")
 
-# fig.tight_layout()
+fig.tight_layout()
 
-# plt.savefig('results/dataset_1_'+kernel_dir+'_svr/'+policyName+'/hist_data_dist_median_'+S+'_w_'+str(W)+'.png')
+plt.savefig('results/dataset_1_'+kernel_dir+'_svr/'+policyName+'/hist_data_dist_median_'+S+'_w_'+str(W)+'.png')
 
 '''
 Plot all error rates
 '''
-# fig, ax = plt.subplots()
+fig, ax = plt.subplots()
 
-# plt.plot(range(0,len(err_storage)), err_storage[0:], fillstyle='bottom')
+plt.plot(range(0,len(err_storage)), err_storage[0:], fillstyle='bottom')
 
-# ax.hlines(init_err,0,len(err_storage)-1,colors='r')
-# props = dict(boxstyle='round', facecolor='white')
-# ax.text(len(err_storage)-0.5,init_err,"{0:f}".format(init_err)\
-# 	,va='center', color='r', bbox=props)
-# ax.grid(True)
-# ax.set_xticks(tuple([0]+list(range(15,len(err_storage)+15,15))))
+ax.hlines(init_err,0,len(err_storage)-1,colors='r')
+props = dict(boxstyle='round', facecolor='white')
+ax.text(len(err_storage)-0.5,init_err,"{0:f}".format(init_err)\
+	,va='center', color='r', bbox=props)
+ax.grid(True)
+ax.set_xticks(tuple([0]+list(range(15,len(err_storage)+15,15))))
 
-# plt.xlim(left=0)
-# plt.ylim(bottom=0)
-# plt.xlabel("Window index")
-# plt.ylabel("Error rate, e")
-# plt.title("Error rate increase/decrease compared\n"+\
-# 	"to initial error rate for HT sensor system,"+\
-# 	" s="+ S +", w="+str(W)+\
-# 	",\nusing Support Vector Regression with "+kernel_name+" Kernel and "+policyName)
+plt.xlim(left=0)
+plt.ylim(bottom=0)
+plt.xlabel("Window index")
+plt.ylabel("Error rate, e")
+plt.title("Error rate increase/decrease compared\n"+\
+	"to initial error rate for HT sensor system,"+\
+	" s="+ S +", w="+str(W)+\
+	",\nusing Support Vector Regression with "+kernel_name+" Kernel and "+policyName)
 
-# plt.tight_layout()
+plt.tight_layout()
 
-# plt.savefig('results/dataset_1_'+kernel_dir+'_svr/'+policyName+'/err_rates_'+ S +\
-# 	'_w_'+str(W)+'.png')
+plt.savefig('results/dataset_1_'+kernel_dir+'_svr/'+policyName+'/err_rates_'+ S +\
+	'_w_'+str(W)+'.png')
