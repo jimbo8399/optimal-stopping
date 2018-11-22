@@ -102,8 +102,8 @@ def policyM(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", a
 		print("Insufficient ammount of data to compute the error rate median, has to be at least 100 datapoints")
 		exit(0)
 	else:
-		errors, _, _, _ = policyN(W, sensor_dataset.iloc[0:100,:], get_model, get_error, getNewX, getNewY, S)
-	median = np.median(errors)
+		err_diff, _, _, _ = policyN(W, sensor_dataset.iloc[0:100,:], get_model, get_error, getNewX, getNewY, S)
+	median = np.median(err_diff)
 
 	sensor_dataset = sensor_dataset.iloc[100:,:]
 
@@ -132,7 +132,10 @@ def policyM(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", a
 
 		#Update median every 100 datapoints
 		if i%100==0:
-			median = np.median(err_storage[-100:])
+		# 	print("Window:", W, "for sensor:",S)
+		# 	print("Median before: %1.10f"%median)
+			median = np.median(err_diff[-100:])
+		# 	print("Median after: %1.10f \n"%median)
 
 		# Receive a new datapoint
 		data = sensor_dataset.iloc[i:i+W,:]

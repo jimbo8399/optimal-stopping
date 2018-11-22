@@ -29,7 +29,7 @@ from linreg.lin_reg_model import get_linear_regression_model as get_model
 from linreg.lin_reg_model import k_fold_cv as get_error
 from policies.policy import *
 
-SIZE = 200
+SIZE = 225
 W = int(sys.argv[1]) # window size
 policies = {"policyE":policyE, "policyN":policyN, "policyM":policyM, "policyA":policyA, "policyC":policyC, "policyR":policyR}
 policyName = sys.argv[2]
@@ -70,7 +70,7 @@ for sensor_ind in range(len(all_sensors)):
     '''
     fig, ax1 = plt.subplots()
     ax1.grid(True)
-    ax1.set_xticks(tuple(range(1,len(err_storage)+15,15)))
+    ax1.set_xticks(tuple(range(1,len(err_diff)+15,15)))
     ax1.tick_params(axis="y", labelcolor="b")
     ax1.plot(range(1,len(err_diff)+1), err_diff, fillstyle='bottom')
 

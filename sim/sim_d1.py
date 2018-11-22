@@ -29,7 +29,7 @@ from policies.policy import *
 
 # 100 datapoints are used for the median delay policy, 
 # and all policies start using the data from the 100th datapoint
-SIZE = 200
+SIZE = 325
 W = int(sys.argv[1]) # window size
 S = sys.argv[2] # sensor name, choices: R1- R8
 if sys.argv[3]=='lin':
@@ -75,7 +75,7 @@ Plot Error rate difference
 '''
 fig, ax1 = plt.subplots()
 ax1.grid(True)
-ax1.set_xticks(tuple([1]+list(range(15,len(err_storage)+15,15))))
+ax1.set_xticks(tuple([1]+list(range(15,len(err_diff)+15,15))))
 ax1.tick_params(axis="y", labelcolor="C0")
 ax1.plot(range(1,len(err_diff)+1), err_diff, fillstyle='bottom')
 
