@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from sklearn.svm import SVR
 from sklearn.model_selection import train_test_split
-from sklearn.decomposition import PCA
 import numpy as np
 
 def get_svr_rbf_model(temp_hum,sensor):
-    svr_rbf = SVR(kernel='rbf', gamma='scale')
+    svr_rbf = SVR(kernel='rbf', gamma='scale') #-->Dow not work on
     X = temp_hum
     r_y = sensor.reshape(sensor.shape[0],)
     return svr_rbf.fit(X,r_y)

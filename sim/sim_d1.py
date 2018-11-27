@@ -29,7 +29,7 @@ from policies.policy import *
 
 # 100 datapoints are used for the median delay policy, 
 # and all policies start using the data from the 100th datapoint
-SIZE = 325
+SIZE = 275
 W = int(sys.argv[1]) # window size
 S = sys.argv[2] # sensor name, choices: R1- R8
 if sys.argv[3]=='lin':
@@ -75,7 +75,7 @@ Plot Error rate difference
 '''
 fig, ax1 = plt.subplots()
 ax1.grid(True)
-ax1.set_xticks(tuple([1]+list(range(15,len(err_diff)+15,15))))
+# ax1.set_xticks(tuple([1]+list(range(15,len(err_diff)+15,15))))
 ax1.tick_params(axis="y", labelcolor="C0")
 ax1.plot(range(1,len(err_diff)+1), err_diff, fillstyle='bottom')
 
@@ -103,7 +103,7 @@ Plot histogram of |e-e'|
 '''
 fig, ax = plt.subplots()
 
-n, bins, patches = ax.hist(err_diff,color='xkcd:azure',bins=(200-W)//2, edgecolor='black')
+n, bins, patches = ax.hist(err_diff,color='xkcd:azure',bins=(SIZE-100-W)//3, edgecolor='black')
 
 median = np.median(err_diff)
 
@@ -123,7 +123,7 @@ if patches[i].xy[0]<=median:
 plt.xlabel("Error rate difference, |e-e'|")
 plt.ylabel("Frequency")
 plt.title("Absolute error difference for SUV sensor ["+S\
-    +"], w="+str(W)+",\nusing Support Vector Regression with "+kernel_name+" Kernel\nand the corresponding median for the data")
+    +"], w="+str(W)+",\nusing Support Vector Regression with "+kernel_name+" Kernel and "+policyName+"\nand the corresponding median for the data")
 
 fig.tight_layout()
 
@@ -141,7 +141,7 @@ props = dict(boxstyle='round', facecolor='white')
 ax.text(len(err_storage)-0.5,init_err,"{0:f}".format(init_err)\
 	,va='center', color='r', bbox=props)
 ax.grid(True)
-ax.set_xticks(tuple([0]+list(range(15,len(err_storage)+15,15))))
+# ax.set_xticks(tuple([0]+list(range(15,len(err_storage)+15,15))))
 
 plt.xlim(left=0)
 plt.ylim(bottom=0)

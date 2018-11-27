@@ -1,0 +1,146 @@
+Applying Policy E
+Done window 25
+Applying Policy A
+Done window 25
+Applying Policy N
+Done window 25
+Applying Policy M
+Done window 25
+Applying Policy R
+Done window 25
+Applying Policy E
+Done window 25
+Applying Policy A
+Done window 25
+Applying Policy N
+Done window 25
+Applying Policy M
+Done window 25
+Applying Policy R
+Done window 25
+Applying Policy A
+Done window 25
+Applying Policy E
+Done window 25
+Applying Policy R
+Done window 25
+Applying Policy M
+Done window 25
+Applying Policy N
+Done window 25
+Applying Policy E
+Done window 25
+Applying Policy A
+Done window 25
+Applying Policy N
+Done window 25
+Applying Policy M
+Done window 25
+Applying Policy R
+Done window 25
+Applying Policy A
+Done window 25
+Applying Policy E
+Done window 25
+Applying Policy R
+Done window 25
+Applying Policy M
+Done window 25
+Applying Policy N
+Done window 25
+Applying Policy A
+Traceback (most recent call last):
+  File "sim/sim_d2.py", line 89, in <module>
+    plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression and "+policyName)
+IndexError: list index out of range
+Done window 25
+Applying Policy E
+Traceback (most recent call last):
+  File "sim/sim_d2.py", line 89, in <module>
+    plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression and "+policyName)
+IndexError: list index out of range
+Done window 25
+Applying Policy R
+Traceback (most recent call last):
+  File "sim/sim_d2.py", line 89, in <module>
+    plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression and "+policyName)
+IndexError: list index out of range
+Done window 25
+Applying Policy M
+Traceback (most recent call last):
+  File "sim/sim_d2.py", line 89, in <module>
+    plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression and "+policyName)
+IndexError: list index out of range
+Done window 25
+Applying Policy N
+Traceback (most recent call last):
+  File "sim/sim_d2.py", line 89, in <module>
+    plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression and "+policyName)
+IndexError: list index out of range
+Done window 25
+Applying Policy A
+Creating directory results/dataset_2_lin_reg/policyE
+Creating directory results/dataset_2_lin_reg/policyN
+Creating directory results/dataset_2_lin_reg/policyM
+Creating directory results/dataset_2_lin_reg/policyA
+Creating directory results/dataset_2_lin_reg/policyC
+Creating directory results/dataset_2_lin_reg/policyR
+Traceback (most recent call last):
+  File "sim/sim_d2.py", line 89, in <module>
+    plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression and "+policyName)
+IndexError: list index out of range
+Done window 25
+Applying Policy E
+Traceback (most recent call last):
+  File "sim/sim_d2.py", line 89, in <module>
+    plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression and "+policyName)
+IndexError: list index out of range
+Done window 25
+Applying Policy R
+Traceback (most recent call last):
+  File "sim/sim_d2.py", line 89, in <module>
+    plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression and "+policyName)
+IndexError: list index out of range
+Done window 25
+Applying Policy M
+Traceback (most recent call last):
+  File "sim/sim_d2.py", line 89, in <module>
+    plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression and "+policyName)
+IndexError: list index out of range
+Done window 25
+Applying Policy N
+Traceback (most recent call last):
+  File "sim/sim_d2.py", line 89, in <module>
+    plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression and "+policyName)
+IndexError: list index out of range
+Done window 25
+Applying Policy A
+Traceback (most recent call last):
+  File "sim/sim_d2.py", line 89, in <module>
+    plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression and "+policyName)
+IndexError: list index out of range
+Done window 25
+Applying Policy E
+Traceback (most recent call last):
+  File "sim/sim_d2.py", line 89, in <module>
+    plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression and "+policyName)
+IndexError: list index out of range
+Done window 25
+Applying Policy R
+Traceback (most recent call last):
+  File "sim/sim_d2.py", line 89, in <module>
+    plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression and "+policyName)
+IndexError: list index out of range
+Done window 25
+Applying Policy M
+Traceback (most recent call last):
+  File "sim/sim_d2.py", line 89, in <module>
+    plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression and "+policyName)
+IndexError: list index out of range
+Done window 25
+Applying Policy N
+Traceback (most recent call last):
+  File "sim/sim_d2.py", line 89, in <module>
+    plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression and "+policyName)
+IndexError: list index out of range
+Done window 25
