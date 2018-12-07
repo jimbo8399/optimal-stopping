@@ -31,7 +31,7 @@ from policies.policy import *
 
 SIZE = 275
 W = int(sys.argv[1]) # window size
-policies = {"policyE":policyE, "policyN":policyN, "policyM":policyM, "policyA":policyA, "policyC":policyC, "policyR":policyR}
+policies = {"policyE":policyE, "policyN":policyN, "policyM":policyM, "policyA":policyA, "policyC":policyC, "policyR":policyR, "policyC":policyC}
 policyName = sys.argv[2]
 applyPolicy = policies.get(policyName)
 if not callable(applyPolicy):
@@ -41,8 +41,7 @@ if not callable(applyPolicy):
 # Initialising data structure
 data_init()
 all_sensors = im()
-# sensor_names = ["pi2","pi3","pi4","pi5"]
-sensor_names = ["pi3"]
+sensor_names = ["pi2","pi3","pi4","pi5"]
 # Import data from each Dataset, USV=pi2, pi3, pi4, pi5
 # Getting only 60 datapoints
 for sensor_ind in range(len(all_sensors)):

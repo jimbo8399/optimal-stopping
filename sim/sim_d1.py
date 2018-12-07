@@ -41,7 +41,7 @@ elif sys.argv[3]=='rbf':
 	kernel_dir = 'rbf'
 	from svr.svr_model import get_svr_rbf_model as get_model
 
-policies = {"policyE":policyE, "policyN":policyN, "policyM":policyM, "policyA":policyA, "policyC":policyC, "policyR":policyR}
+policies = {"policyE":policyE, "policyN":policyN, "policyM":policyM, "policyA":policyA, "policyC":policyC, "policyR":policyR, "policyC":policyC}
 policyName = sys.argv[4]
 applyPolicy = policies.get(policyName)
 if not callable(applyPolicy):
