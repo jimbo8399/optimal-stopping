@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
 from pathlib import Path
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.lines as lines
 
 PROJ_NAME = "optimal-stopping"
 
@@ -25,6 +22,7 @@ sys.path.append(proj_pathname)
 
 from bin.data_import import data_init
 from bin.data_import import import_dataset_2 as im
+from bin.plot_d2 import *
 from linreg.lin_reg_model import get_linear_regression_model as get_model
 from linreg.lin_reg_model import k_fold_cv as get_error
 from policies.policy import *
@@ -65,82 +63,6 @@ for sensor_ind in range(len(all_sensors)):
         sensor = all_sensors[sensor_ind].iloc[100:SIZE,:]
         err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY)
 
-    '''
-    Plot Error rate difference
-    '''
-    fig, ax1 = plt.subplots()
-    ax1.grid(True)
-    # ax1.set_xticks(tuple(range(1,len(err_diff)+15,15)))
-    ax1.tick_params(axis="y", labelcolor="b")
-    ax1.plot(range(1,len(err_diff)+1), err_diff, fillstyle='bottom')
-
-    # instantiate a second axes that shares the same x-axis
-    ax2 = ax1.twinx() 
-    ax2.tick_params(axis="y", labelcolor="xkcd:red orange")
-    ax2.plot(range(0,len(comm)), comm, fillstyle='bottom', color="xkcd:red orange")
-
-    plt.xlim(left=0)
-    plt.ylim(bottom=0)
-  
-    plt.xlabel("Window index")
-    ax1.set_ylabel("Error rate difference, |e-e'|", color="b")
-    ax2.set_ylabel('Communication rate', color="xkcd:red orange")
-    plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression and "+policyName)
-
-    plt.tight_layout()
-
-    plt.savefig('results/dataset_2_lin_reg/'+policyName+'/abs_err_diff_'+sensor_names[sensor_ind]+'_w_'+str(W)+'.png')
-    
-    '''
-    Plot histogram of |e-e'|
-    '''
-    fig, ax = plt.subplots()
-
-    n, bins, patches = ax.hist(err_diff,color='xkcd:azure',bins=(SIZE-100-W)//3, edgecolor='black')
-
-    median = np.median(err_diff)
-
-    props = dict(boxstyle='round', facecolor='white')
-    for i in range(1,len(patches)):
-        if patches[i-1].xy[0]<=median and median<patches[i].xy[0]:
-            patches[i-1].set_color('xkcd:banana')
-            patches[i-1].set_edgecolor('black')
-            patches[i-1].set_hatch('/')
-            ax.text(patches[i-1].xy[0]+patches[i-1].get_width()/2,n[i-1],"median:\n{0:1.3f}".format(median),va='center', color='r', bbox=props)
-    if patches[i].xy[0]<=median:
-        patches[i].set_color('xkcd:banana')
-        patches[i].set_edgecolor('black')
-        patches[i].set_hatch('/')
-        ax.text(patches[i].xy[0]+patches[i].get_width()/2,n[i-1],"median:\n{0:1.3f}".format(median),va='center', color='r', bbox=props)
-
-    plt.xlabel("Error rate difference, |e-e'|")
-    plt.ylabel("Frequency")
-    plt.title("Absolute error difference for SUV sensor ["+sensor_names[sensor_ind]\
-        +"], w="+str(W)+",\nusing Linear Regression and "+policyName+"\nand the corresponding median for the data")
-
-    fig.tight_layout()
-    
-    plt.savefig('results/dataset_2_lin_reg/'+policyName+'/hist_data_dist_median_'+sensor_names[sensor_ind]+'_w_'+str(W)+'.png')
-
-    '''
-    Plot all error rates
-    '''
-    fig, ax = plt.subplots()
-  
-    plt.plot(range(0,len(err_storage)), err_storage[0:], fillstyle='bottom')
-  
-    ax.hlines(init_err,0,len(err_storage)-1,colors='r')
-    props = dict(boxstyle='round', facecolor='white')
-    ax.text(len(err_storage)-0.5,init_err,"{0:f}".format(init_err),va='center', color='r', bbox=props)
-    ax.grid(True)
-    # ax.set_xticks(tuple(range(1,len(err_storage)+15,15)))
-  
-    plt.xlim(left=0)
-    plt.ylim(bottom=0)
-    plt.xlabel("Window index")
-    plt.ylabel("Error rate, e")
-    plt.title("Error rate increase/decrease compared\nto initial error rate for SUV sensor ["+sensor_names[sensor_ind]+"], w="+str(W)+",\nusing Linear Regression and"+policyName)
-  
-    plt.tight_layout()
-
-    plt.savefig('results/dataset_2_lin_reg/'+policyName+'/err_rates_'+sensor_names[sensor_ind]+'_w_'+str(W)+'.png')
+    plotErrorRateDiff(err_diff, comm, policyName, W, sensor_names[sensor_ind])
+    plotHistErr(err_diff, policyName, W, sensor_names[sensor_ind], SIZE)
+    plotErrRate(err_storage, init_err, policyName, W, sensor_names[sensor_ind])
