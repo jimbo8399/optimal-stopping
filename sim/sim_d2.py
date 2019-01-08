@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 from pathlib import Path
+import pickle
 
 PROJ_NAME = "optimal-stopping"
 
@@ -26,6 +27,7 @@ from bin.plot_d2 import *
 from linreg.lin_reg_model import get_linear_regression_model as get_model
 from linreg.lin_reg_model import k_fold_cv as get_error
 from policies.policy import *
+from bin.result import Result
 
 SIZE = 275
 W = int(sys.argv[1]) # window size
@@ -40,6 +42,10 @@ if not callable(applyPolicy):
 data_init()
 all_sensors = im()
 sensor_names = ["pi2","pi3","pi4","pi5"]
+
+# Results to be dumped into a pickle file
+results = []
+
 # Import data from each Dataset, USV=pi2, pi3, pi4, pi5
 # Getting only 60 datapoints
 for sensor_ind in range(len(all_sensors)):
@@ -63,6 +69,19 @@ for sensor_ind in range(len(all_sensors)):
         sensor = all_sensors[sensor_ind].iloc[100:SIZE,:]
         err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY)
 
+    result = Result(sensor_names[sensor_ind], 
+        err_diff, 
+        err_storage, 
+        comm, 
+        policyName, 
+        W, 
+        init_err,
+        SIZE
+        )
+    results.append(result)
+
     plotErrorRateDiff(err_diff, comm, policyName, W, sensor_names[sensor_ind])
     plotHistErr(err_diff, policyName, W, sensor_names[sensor_ind], SIZE)
     plotErrRate(err_storage, init_err, policyName, W, sensor_names[sensor_ind])
+
+pickle.dump(results, open("results/results_d2_lin_"+policyName+"_"+str(W)+".pkl", "wb"))

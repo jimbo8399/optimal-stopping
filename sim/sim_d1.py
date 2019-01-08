@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 from pathlib import Path
+import pickle
 
 PROJ_NAME = "optimal-stopping"
 
@@ -24,6 +25,7 @@ from bin.data_import import import_dataset_1 as im
 from bin.plot_d1 import *
 from svr.svr_model import k_fold_cv as get_error
 from policies.policy import *
+from bin.result import Result
 
 # 100 datapoints are used for the median delay policy, 
 # and all policies start using the data from the 100th datapoint
@@ -68,6 +70,19 @@ else:
 	sensor_dataset = im().iloc[100:SIZE,:]
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)
 
+result = Result(S,
+	err_diff,
+	err_storage,
+	comm,
+	policyName,
+	W,
+	init_err,
+	SIZE,
+	kernel_name,
+	kernel_dir
+	)
+
+pickle.dump(result, open("results/results_d1_"+kernel_dir+"_"+S+"_"+policyName+"_"+str(W)+".pkl","wb"))
 
 plotErrorRateDiff(err_diff, comm, kernel_name, policyName, kernel_dir, W, S)
 plotHistErr(err_diff, kernel_name, policyName, kernel_dir, W, S, SIZE)
