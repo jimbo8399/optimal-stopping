@@ -58,7 +58,7 @@ for sensor_ind in range(len(all_sensors)):
         return data.humidity.values.reshape(-1,1)
 
     if policyName=="policyM":
-        err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, alpha=1)
+        err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, alpha=0.5)
     else:
         sensor = all_sensors[sensor_ind].iloc[100:SIZE,:]
         err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY)
