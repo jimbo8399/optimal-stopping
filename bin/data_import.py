@@ -24,6 +24,7 @@ data_path = proj_path / 'data'
 
 # Create path to the project results
 results_path = proj_path / 'results'
+results_raw_path = results_path / 'raw_data'
 
 d1_filename = "HT_Sensor_metadata.dat"
 
@@ -50,6 +51,10 @@ def data_init():
     if "results" not in os.listdir(proj_path):
         print("Creating top directory results/")
         os.mkdir(results_path)
+    '''Results pickle files'''
+    if "raw_data" not in os.listdir(results_path):
+        print("Creating directory results/raw_data")
+        os.mkdir(results_raw_path)
     '''Results rbf svr'''
     if "dataset_1_rbf_svr" not in os.listdir(results_path):
         print("Creating directory results/dataset_1_rbf_svr")

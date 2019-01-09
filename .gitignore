@@ -109,4 +109,4 @@ venv.bak/
 # results and plots
 /results
 /results_backup
-
+/output.txt

@@ -82,7 +82,7 @@ result = Result(S,
 	kernel_dir
 	)
 
-pickle.dump(result, open("results/results_d1_"+kernel_dir+"_"+S+"_"+policyName+"_"+str(W)+".pkl","wb"))
+pickle.dump(result, open("results/raw_data/results_d1_"+kernel_dir+"_"+S+"_"+policyName+"_"+str(W)+".pkl","wb"))
 
 plotErrorRateDiff(err_diff, comm, kernel_name, policyName, kernel_dir, W, S)
 plotHistErr(err_diff, kernel_name, policyName, kernel_dir, W, S, SIZE)

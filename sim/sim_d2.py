@@ -84,4 +84,4 @@ for sensor_ind in range(len(all_sensors)):
     plotHistErr(err_diff, policyName, W, sensor_names[sensor_ind], SIZE)
     plotErrRate(err_storage, init_err, policyName, W, sensor_names[sensor_ind])
 
-pickle.dump(results, open("results/results_d2_lin_"+policyName+"_"+str(W)+".pkl", "wb"))
+pickle.dump(results, open("results/raw_data/results_d2_"+policyName+"_"+str(W)+".pkl", "wb"))
