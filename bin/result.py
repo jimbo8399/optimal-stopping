@@ -12,6 +12,7 @@ class Result:
 		kernel_name="",
 		kernel_dir=""
 		):
+		self.sensor_name = sensor_name
 		self.err_diff = err_diff
 		self.err_storage = err_storage
 		self.comm = communication
