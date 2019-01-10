@@ -80,8 +80,4 @@ for sensor_ind in range(len(all_sensors)):
         )
     results.append(result)
 
-    plotErrorRateDiff(err_diff, comm, policyName, W, sensor_names[sensor_ind])
-    plotHistErr(err_diff, policyName, W, sensor_names[sensor_ind], SIZE)
-    plotErrRate(err_storage, init_err, policyName, W, sensor_names[sensor_ind])
-
 pickle.dump(results, open("results/raw_data/results_d2_"+policyName+"_"+str(W)+".pkl", "wb"))
