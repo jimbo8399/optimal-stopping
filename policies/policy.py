@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.stats import gamma
 
 '''
 Policy N: never send the model
@@ -211,28 +212,52 @@ def policyA(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 
 	return err_diff, err_storage, init_err, comm
 
-def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", cusumT = 0.003):
+def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", cusumT = 3.3):
+	#good dist
+	A1=1;#shape
+	B1=2;#scale
+	#bad dist
+	A2=2;#shape
+	B2=2;#scale
 	data = sensor_dataset.iloc[0:W,:]
+	data_at_1 = sensor_dataset.iloc[1:1+W,:]
 
 	# Reshape the temperature and humidity values
+	init_X_at_1 = getNewX(data_at_1)
 	init_X = getNewX(data)
 	# Reshape the sensor values
+	init_y_at_1 = getNewY(data_at_1, S)
 	init_y = getNewY(data, S)
 	# Build a model to be sent to the Edge Gate
+	model_at_1 = get_model(init_X_at_1, init_y_at_1)
 	model = get_model(init_X, init_y)
 	# Evaluate the model
+	err_at_1 = get_error(model_at_1, init_X, init_y)
 	err = get_error(model, init_X, init_y)
 
-	err_diff = []
-	err_storage = [err]
+	diff = abs(err_at_1-err)
+
+	good_diff = gamma.pdf(diff, a=A1, scale=B1)
+	bad_diff = gamma.pdf(diff, a=A2, scale=B2)
+
+	#log ratio likelihood value going from good to bad distribution
+	log_ratio = np.log(bad_diff/good_diff)
+
+	err_diff = [diff]
+	err_storage = [err, err_at_1]
 	init_err = err
 	init_model = model
-	errSum = 0
+
+	log_sum = log_ratio
+	log_ratio_vector = [log_ratio]
+	min_sum = min(log_ratio_vector)
+	g = [] #decision vector
+	g_value = 0 #decision value monitored if it's exceeding the threshold
 
 	comm_count = 1
 	comm = [comm_count]
 
-	dataset_length=len(sensor_dataset)
+	dataset_length = len(sensor_dataset)
 	i = 1
 	while (i + W) <= dataset_length:
 		# Receive a new datapoint
@@ -249,16 +274,30 @@ def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", c
 		init_model_err = get_error(init_model, X, y)
 		diff = abs(init_model_err-new_err)
 		err_diff += [diff]
-		errSum += diff
-		if errSum > cusumT:
+
+		good_diff = gamma.pdf(diff, a=A1, scale=B1)
+		bad_diff = gamma.pdf(diff, a=A2, scale=B2)
+		log_ratio = np.log(bad_diff/good_diff)
+		log_sum += log_ratio
+		min_sum = min(log_ratio_vector)
+		log_ratio_vector += [log_sum]
+		g_value = log_sum-min_sum
+		g += [g_value]
+
+		if g_value > cusumT:
 			init_model = new_model
-			errSum = 0
 			comm_count += 1
+
+			#reset the algorithm
+			log_sum = log_ratio
+			log_ratio_vector = [log_ratio]
+			min_sum = min(log_ratio_vector)
+			g_value = 0
+
 		comm += [comm_count]
 
 		# Slide the window with 1
 		i += 1
-
 	return err_diff, err_storage, init_err, comm
 
 '''

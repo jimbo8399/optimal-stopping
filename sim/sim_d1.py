@@ -73,6 +73,9 @@ def getNewY(data, S):
 
 if policyName=="policyM":
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, alpha=0.5)
+elif policyName=="policyC":
+	sensor_dataset = im().iloc[100:SIZE,:]
+	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)
 else:
 	sensor_dataset = im().iloc[100:SIZE,:]
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)

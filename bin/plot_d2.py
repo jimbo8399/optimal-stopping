@@ -16,7 +16,7 @@ def plotErrorRateDiff(err_diff, comm, policyName, W, S):
     # instantiate a second axes that shares the same x-axis
     ax2 = ax1.twinx() 
     ax2.tick_params(axis="y", labelcolor="xkcd:red orange")
-    ax2.yaxis.set_major_formatter(FuncFormatter(lambda x, p: "{:g}".format(x)))
+    # ax2.yaxis.set_major_formatter(FuncFormatter(lambda x, p: "{:g}".format(x)))
     ax2.plot(range(0,len(comm)), comm, fillstyle='bottom', color="xkcd:red orange")
 
     plt.xlim(left=0)
@@ -32,6 +32,7 @@ def plotErrorRateDiff(err_diff, comm, policyName, W, S):
 
     plt.savefig('results/dataset_2_lin_reg/'+policyName+'/abs_err_diff_'+S+'_w_'+str(W)+'.png')
 
+    plt.close(fig)
 '''
 Plot histogram of |e-e'|
 '''
@@ -67,6 +68,8 @@ def plotHistErr(err_diff, policyName, W, S, SIZE):
 
     plt.savefig('results/dataset_2_lin_reg/'+policyName+'/hist_data_dist_median_'+S+'_w_'+str(W)+'.png')
 
+    plt.close(fig)
+
 '''
 Plot all error rates
 '''
@@ -92,3 +95,5 @@ def plotErrRate(err_storage, init_err, policyName, W, S):
     plt.tight_layout()
 
     plt.savefig('results/dataset_2_lin_reg/'+policyName+'/err_rates_'+S+'_w_'+str(W)+'.png')
+
+    plt.close(fig)
