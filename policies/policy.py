@@ -213,12 +213,37 @@ def policyA(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 	return err_diff, err_storage, init_err, comm
 
 def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", cusumT = 3.3):
-	#good dist
-	A1=1;#shape
-	B1=2;#scale
-	#bad dist
-	A2=2;#shape
-	B2=2;#scale
+
+	BASEN = 75
+
+	if len(sensor_dataset) < BASEN:
+		print("Insufficient ammount of data to compute the error rate median, has to be at least 100 datapoints")
+		exit(0)
+	else:
+		err_diff_good, _, _, _ = policyE(W, sensor_dataset.iloc[0:BASEN,:], get_model, get_error, getNewX, getNewY, S)
+		err_diff_bad, _, _, _ = policyN(W, sensor_dataset.iloc[0:BASEN,:], get_model, get_error, getNewX, getNewY, S)
+
+	print("\nGOOOOOOD dist", err_diff_good)
+	print("\nBAAAAAAD dist", err_diff_bad)
+
+	#good distribution
+	mean_good = np.mean(err_diff_good)
+	var_good = np.var(err_diff_good)
+	A1 = (mean_good**2)/var_good
+	B1 = var_good/mean_good
+	print("\ngood shape ", A1)
+	print("\ngood scale", B1)
+
+	#bad distribution
+	mean_bad = np.mean(err_diff_bad)
+	var_bad = np.var(err_diff_bad)
+	A2 = (mean_bad**2)/var_bad
+	B2 = var_bad/mean_bad
+	print("\nbad shape", A2)
+	print("\nbad scale", B2)
+
+	sensor_dataset = sensor_dataset.iloc[BASEN:,:]
+
 	data = sensor_dataset.iloc[0:W,:]
 	data_at_1 = sensor_dataset.iloc[1:1+W,:]
 
@@ -240,14 +265,13 @@ def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", c
 	good_diff = gamma.pdf(diff, a=A1, scale=B1)
 	bad_diff = gamma.pdf(diff, a=A2, scale=B2)
 
-	#log ratio likelihood value going from good to bad distribution
-	log_ratio = np.log(bad_diff/good_diff)
-
 	err_diff = [diff]
 	err_storage = [err, err_at_1]
 	init_err = err
 	init_model = model
 
+	#log ratio likelihood value going from good to bad distribution
+	log_ratio = np.log(bad_diff/good_diff)
 	log_sum = log_ratio
 	log_ratio_vector = [log_ratio]
 	min_sum = min(log_ratio_vector)
@@ -258,8 +282,9 @@ def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", c
 	comm = [comm_count]
 
 	dataset_length = len(sensor_dataset)
-	i = 1
+	i = 2
 	while (i + W) <= dataset_length:
+
 		# Receive a new datapoint
 		data = sensor_dataset.iloc[i:i+W,:]
 		X = getNewX(data)
@@ -277,11 +302,15 @@ def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", c
 
 		good_diff = gamma.pdf(diff, a=A1, scale=B1)
 		bad_diff = gamma.pdf(diff, a=A2, scale=B2)
+		
 		log_ratio = np.log(bad_diff/good_diff)
 		log_sum += log_ratio
+
 		min_sum = min(log_ratio_vector)
-		log_ratio_vector += [log_sum]
+
 		g_value = log_sum-min_sum
+
+		log_ratio_vector += [log_sum]
 		g += [g_value]
 
 		if g_value > cusumT:
@@ -298,6 +327,10 @@ def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", c
 
 		# Slide the window with 1
 		i += 1
+	print("\ntreshold", cusumT)
+	print("\nG values",g)
+	print("\nerror diff:", err_diff)
+
 	return err_diff, err_storage, init_err, comm
 
 '''

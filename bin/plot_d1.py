@@ -43,6 +43,8 @@ Plot histogram of |e-e'|
 def plotHistErr(err_diff, kernel_name, policyName, kernel_dir, W, S, SIZE):
     fig, ax = plt.subplots()
 
+    # err_diff = [diff*10000 for diff in err_diff]
+
     ax.yaxis.set_major_formatter(FuncFormatter(lambda x, p: "{:g}".format(x)))
     ax.xaxis.set_major_formatter(FuncFormatter(lambda x, p: "{:g}".format(x)))
     plt.xlabel("Error rate difference, |e-e'|")
@@ -51,7 +53,7 @@ def plotHistErr(err_diff, kernel_name, policyName, kernel_dir, W, S, SIZE):
         +"], w="+str(W)+",\nusing Support Vector Regression with "+\
         kernel_name+" Kernel and "+policyName+"\nand the corresponding median for the data")
 
-    n, bins, patches = ax.hist(err_diff,color='xkcd:azure',bins=(SIZE-100-W)//3, edgecolor='black')
+    n, bins, patches = ax.hist(err_diff,density=True,color='xkcd:azure',bins=(SIZE-100-W)//3, edgecolor='black')
 
     median = np.median(err_diff)
 

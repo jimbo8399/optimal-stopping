@@ -29,7 +29,7 @@ from bin.result import Result
 
 # 100 datapoints are used for the median delay policy, 
 # and all policies start using the data from the 100th datapoint
-SIZE = 275
+SIZE = 375 # Changed from 275
 W = int(sys.argv[1]) # window size
 S = sys.argv[2] # sensor name, choices: R1- R8
 if sys.argv[3]=='lin':
@@ -71,11 +71,12 @@ def getNewX(data):
 def getNewY(data, S):
 	return data[[S]].values
 
+print("Sensor "+S)
+
 if policyName=="policyM":
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, alpha=0.5)
 elif policyName=="policyC":
-	sensor_dataset = im().iloc[100:SIZE,:]
-	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)
+	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, cusumT=1)
 else:
 	sensor_dataset = im().iloc[100:SIZE,:]
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)

@@ -39,7 +39,7 @@ Plot histogram of |e-e'|
 def plotHistErr(err_diff, policyName, W, S, SIZE):
     fig, ax = plt.subplots()
 
-    n, bins, patches = ax.hist(err_diff,color='xkcd:azure',bins=(SIZE-100-W)//3, edgecolor='black')
+    n, bins, patches = ax.hist(err_diff, density=True, color='xkcd:azure',bins=(SIZE-100-W)//3, edgecolor='black')
 
     median = np.median(err_diff)
 
@@ -58,6 +58,7 @@ def plotHistErr(err_diff, policyName, W, S, SIZE):
 
     ax.yaxis.set_major_formatter(FuncFormatter(lambda x, p: "{:g}".format(x)))
     ax.xaxis.set_major_formatter(FuncFormatter(lambda x, p: "{:g}".format(x)))
+
     plt.xlabel("Error rate difference, |e-e'|")
     plt.ylabel("Frequency")
     plt.title("Absolute error difference for SUV sensor ["+S\

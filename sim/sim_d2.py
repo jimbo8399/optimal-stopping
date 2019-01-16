@@ -40,8 +40,9 @@ if not callable(applyPolicy):
 
 # Initialising data structure
 data_init()
-all_sensors = im()
-sensor_names = ["pi2","pi3","pi4","pi5"]
+# sensor_names = ["pi2","pi3","pi4","pi5"]
+sensor_names = ["pi3"]
+all_sensors = im(sensor_names)
 
 # Results to be dumped into a pickle file
 results = []
@@ -63,8 +64,11 @@ for sensor_ind in range(len(all_sensors)):
     def getNewY(data, S=None):
         return data.humidity.values.reshape(-1,1)
 
+    print("Sensor "+sensor_names[sensor_ind])
     if policyName=="policyM":
         err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, alpha=0.5)
+    elif policyName=="policyC":
+        err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, cusumT=5)
     else:
         sensor = all_sensors[sensor_ind].iloc[100:SIZE,:]
         err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY)
