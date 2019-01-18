@@ -386,3 +386,49 @@ def policyR(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 		i += 1
 
 	return err_diff, err_storage, init_err, comm
+
+def policyOST(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", theta = 1, B = 1):
+	data = sensor_dataset.iloc[0:W,:]
+
+	# Reshape the temperature and humidity values
+	init_X = getNewX(data)
+	# Reshape the sensor values
+	init_y = getNewY(data, S)
+	# Build a model to be sent to the Edge Gate
+	model = get_model(init_X, init_y)
+	# Evaluate the model
+	err = get_error(model, init_X, init_y)
+
+	err_diff = []
+	err_storage = [err]
+	init_err = err
+	init_model = model
+
+	comm_count = 1
+	comm = [comm_count]
+
+	err_sum = err
+
+	dataset_length = len(sensor_dataset)
+	
+	i = 1
+	while (i + W) <= dataset_length:
+		# Receive a new datapoint
+		data = sensor_dataset.iloc[i:i+W,:]
+		X = getNewX(data)
+		y = getNewY(data, S)
+		# Build a new model with the newly arrived datapoint 
+		# and the discarded oldest datapoint
+		new_model = get_model(X, y)
+		# Evaluate
+		new_err = get_error(new_model, X, y)
+		err_storage += [new_err]
+
+		init_model_err = get_error(init_model, X, y)
+		err_diff += [abs(init_model_err-new_err)]
+
+		err_sum += err_diff
+
+		#DECIDE if we should update or not
+
+	return err_diff, err_storage, init_err, comm
