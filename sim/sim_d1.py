@@ -2,6 +2,7 @@
 import sys
 from pathlib import Path
 import pickle
+import pandas as pd
 
 PROJ_NAME = "optimal-stopping"
 
@@ -29,7 +30,7 @@ from bin.result import Result
 
 # 100 datapoints are used for the median delay policy, 
 # and all policies start using the data from the 100th datapoint
-SIZE = 375 # Changed from 275
+SIZE = 300
 W = int(sys.argv[1]) # window size
 S = sys.argv[2] # sensor name, choices: R1- R8
 if sys.argv[3]=='lin':
@@ -59,11 +60,76 @@ if not callable(applyPolicy):
 data_init()
 sensor_dataset = im().iloc[0:SIZE,:]
 
+# plt.plot(sensor_dataset.loc[:,"R1"])
+
 dataset_length = len(sensor_dataset)
 
 if dataset_length<100+W:
 	print("insufficient amount of data")
 	exit(1)
+
+'''
+TODO: mae a method for introducing change in the distribution
+'''
+### FIRST Artificial change
+change = []
+### the start and end index is included in df slicing
+startind = len(sensor_dataset)//4 + 1
+endind = len(sensor_dataset)
+changeSize = endind-startind
+###
+offs = 0.005
+for col in sensor_dataset.columns.values:
+	if col == 'id' or col == "time":
+		emptyEntry = np.zeros((changeSize,1))
+		change += [pd.DataFrame(emptyEntry, columns=[col])]
+	if col != 'id' and col != "time":
+		mean = np.mean(sensor_dataset[col])
+		changeUp = np.linspace(0,mean*offs, changeSize/2, endpoint=False)
+		changeDown = np.linspace(mean*offs,0, changeSize/2, endpoint=False)
+		singleChange = np.concatenate([changeUp,changeDown]).reshape(changeSize,1)
+		change += [pd.DataFrame(singleChange, columns=[col])]
+
+change = pd.concat(change, axis=1).values
+sample = sensor_dataset.loc[startind:endind].values
+amendedSample = sample+change
+
+sensor_dataset = pd.concat([sensor_dataset.loc[:startind-1],
+	pd.DataFrame(amendedSample, columns=sensor_dataset.columns.values),
+	sensor_dataset.loc[endind+1:]],
+	ignore_index=True)
+
+### SECOND Artificial change
+change = []
+### the start and end index is included in df slicing
+startind = len(sensor_dataset)//2
+endind = len(sensor_dataset)
+changeSize = endind-startind
+###
+offs = 0.005
+for col in sensor_dataset.columns.values:
+	if col == 'id' or col == "time":
+		emptyEntry = np.zeros((changeSize,1))
+		change += [pd.DataFrame(emptyEntry, columns=[col])]
+	if col != 'id' and col != "time":
+		mean = np.mean(sensor_dataset[col])
+		changeUp = np.linspace(0,mean*offs, changeSize/2, endpoint=False)
+		changeDown = np.linspace(mean*offs,0, changeSize/2, endpoint=False)
+		singleChange = np.concatenate([changeUp,changeDown]).reshape(changeSize,1)
+		change += [pd.DataFrame(singleChange, columns=[col])]
+
+change = pd.concat(change, axis=1).values
+sample = sensor_dataset.loc[startind:endind].values
+amendedSample = sample+change
+
+sensor_dataset = pd.concat([sensor_dataset.loc[:startind-1],
+	pd.DataFrame(amendedSample, columns=sensor_dataset.columns.values),
+	sensor_dataset.loc[endind+1:]],
+	ignore_index=True)
+
+# plt.plot(sensor_dataset.loc[:,"R1"])
+
+# plt.show()
 
 def getNewX(data):
 	return data[['Temp.','Humidity']].values
@@ -71,12 +137,10 @@ def getNewX(data):
 def getNewY(data, S):
 	return data[[S]].values
 
-print("Sensor "+S)
-
 if policyName=="policyM":
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, alpha=0.5)
 elif policyName=="policyC":
-	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, cusumT=1)
+	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, cusumT=0.5)
 else:
 	sensor_dataset = im().iloc[100:SIZE,:]
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)

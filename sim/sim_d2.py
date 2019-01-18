@@ -29,7 +29,7 @@ from linreg.lin_reg_model import k_fold_cv as get_error
 from policies.policy import *
 from bin.result import Result
 
-SIZE = 275
+SIZE = 300
 W = int(sys.argv[1]) # window size
 policies = {"policyE":policyE, "policyN":policyN, "policyM":policyM, "policyA":policyA, "policyC":policyC, "policyR":policyR, "policyC":policyC}
 policyName = sys.argv[2]

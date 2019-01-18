@@ -99,14 +99,17 @@ def policyE(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 Policy M: send model only when error diff is above the median error of first 100 error diffs
 '''
 def policyM(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", alpha=0.5):
-	if len(sensor_dataset) < 100:
+	
+	BASEN = 100
+
+	if len(sensor_dataset) < BASEN:
 		print("Insufficient ammount of data to compute the error rate median, has to be at least 100 datapoints")
 		exit(0)
 	else:
-		err_diff, _, _, _ = policyN(W, sensor_dataset.iloc[0:100,:], get_model, get_error, getNewX, getNewY, S)
+		err_diff, _, _, _ = policyN(W, sensor_dataset.iloc[0:BASEN,:], get_model, get_error, getNewX, getNewY, S)
 	median = np.median(err_diff)
 
-	sensor_dataset = sensor_dataset.iloc[100:,:]
+	sensor_dataset = sensor_dataset.iloc[BASEN+1:,:]
 
 	data = sensor_dataset.iloc[0:W,:]
 
@@ -214,7 +217,7 @@ def policyA(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 
 def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", cusumT = 3.3):
 
-	BASEN = 75
+	BASEN = 100
 
 	if len(sensor_dataset) < BASEN:
 		print("Insufficient ammount of data to compute the error rate median, has to be at least 100 datapoints")
@@ -242,7 +245,7 @@ def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", c
 	print("\nbad shape", A2)
 	print("\nbad scale", B2)
 
-	sensor_dataset = sensor_dataset.iloc[BASEN:,:]
+	sensor_dataset = sensor_dataset.iloc[BASEN+1:,:]
 
 	data = sensor_dataset.iloc[0:W,:]
 	data_at_1 = sensor_dataset.iloc[1:1+W,:]
