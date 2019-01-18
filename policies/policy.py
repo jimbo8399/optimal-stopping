@@ -217,7 +217,7 @@ def policyA(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 
 def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", cusumT = 3.3):
 
-	BASEN = 100
+	BASEN = 75
 
 	if len(sensor_dataset) < BASEN:
 		print("Insufficient ammount of data to compute the error rate median, has to be at least 100 datapoints")

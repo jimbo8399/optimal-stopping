@@ -110,3 +110,5 @@ venv.bak/
 /results
 /results_backup
 /output.txt
+*.png
+*.html

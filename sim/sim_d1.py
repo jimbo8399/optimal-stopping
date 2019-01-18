@@ -68,17 +68,19 @@ if dataset_length<100+W:
 	print("insufficient amount of data")
 	exit(1)
 
+# plt.plot(sensor_dataset.loc[:,"R1"], label="R1 unchanged")
+
 '''
-TODO: mae a method for introducing change in the distribution
+TODO: make a method for introducing change in the distribution
 '''
 ### FIRST Artificial change
 change = []
 ### the start and end index is included in df slicing
-startind = len(sensor_dataset)//4 + 1
+startind = len(sensor_dataset)//5
 endind = len(sensor_dataset)
 changeSize = endind-startind
 ###
-offs = 0.005
+offs = 0.025
 for col in sensor_dataset.columns.values:
 	if col == 'id' or col == "time":
 		emptyEntry = np.zeros((changeSize,1))
@@ -106,7 +108,7 @@ startind = len(sensor_dataset)//2
 endind = len(sensor_dataset)
 changeSize = endind-startind
 ###
-offs = 0.005
+offs = 0.01
 for col in sensor_dataset.columns.values:
 	if col == 'id' or col == "time":
 		emptyEntry = np.zeros((changeSize,1))
@@ -127,7 +129,8 @@ sensor_dataset = pd.concat([sensor_dataset.loc[:startind-1],
 	sensor_dataset.loc[endind+1:]],
 	ignore_index=True)
 
-# plt.plot(sensor_dataset.loc[:,"R1"])
+# plt.plot(sensor_dataset.loc[:,"R1"], label="R1 post change")
+# plt.legend()
 
 # plt.show()
 
