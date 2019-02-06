@@ -26,7 +26,8 @@ data_path = proj_path / 'data'
 results_path = proj_path / 'results'
 results_raw_path = results_path / 'raw_data'
 
-d1_filename = "HT_Sensor_metadata.dat"
+d1_filename = "HT_Sensor_dataset.dat"
+d1_zip_filename = "HT_Sensor_dataset.zip"
 
 PATH_DATASET_1 = data_path / "DATASET-1"
 PATH_DATASET_2 = data_path / "DATASET-2"
@@ -95,10 +96,14 @@ def data_init():
             file.write(resp.read())
         print("-->-->Unzipping data")
         zip_file = ZipFile(str(zip_d1_path))
+        zip_file.extract(member=d1_zip_filename, path=str(PATH_DATASET_1))
+        zip_file = ZipFile(str(PATH_DATASET_1/d1_zip_filename))
         zip_file.extract(member=d1_filename, path=str(PATH_DATASET_1))
     elif d1_filename not in os.listdir(PATH_DATASET_1):
         print("-->-->Unzipping data from zip_d1.zip")
         zip_file = ZipFile(str(zip_d1_path))
+        zip_file.extract(member=d1_zip_filename, path=str(PATH_DATASET_1))
+        zip_file = ZipFile(str(PATH_DATASET_1/d1_zip_filename))
         zip_file.extract(member=d1_filename, path=str(PATH_DATASET_1))
 
     '''
