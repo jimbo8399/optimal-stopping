@@ -5,7 +5,7 @@ from scipy.stats import gamma
 Policy N: never send the model
 '''
 def policyN(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
-	data = sensor_dataset.iloc[0:W,:]
+	data = sensor_dataset.iloc[0:W-1,:]
 
 	# Reshape the temperature and humidity values
 	init_X = getNewX(data)
@@ -28,7 +28,7 @@ def policyN(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 	i = 1
 	while (i + W) <= dataset_length:
 		# Receive a new datapoint
-		data = sensor_dataset.iloc[i:i+W,:]
+		data = sensor_dataset.iloc[i:i+W-1,:]
 		X = getNewX(data)
 		y = getNewY(data, S)
 		# Build a new model with the newly arrived datapoint 
@@ -50,7 +50,7 @@ def policyN(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 Policy E: always send the model
 '''
 def policyE(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
-	data = sensor_dataset.iloc[0:W,:]
+	data = sensor_dataset.iloc[0:W-1,:]
 
 	# Reshape the temperature and humidity values
 	init_X = getNewX(data)
@@ -73,7 +73,7 @@ def policyE(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 	i = 1
 	while (i + W) <= dataset_length:
 		# Receive a new datapoint
-		data = sensor_dataset.iloc[i:i+W,:]
+		data = sensor_dataset.iloc[i:i+W-1,:]
 		X = getNewX(data)
 		y = getNewY(data, S)
 		# Build a new model with the newly arrived datapoint 
@@ -111,7 +111,7 @@ def policyM(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", a
 
 	sensor_dataset = sensor_dataset.iloc[BASEN+1:,:]
 
-	data = sensor_dataset.iloc[0:W,:]
+	data = sensor_dataset.iloc[0:W-1,:]
 
 	# Reshape the temperature and humidity values
 	init_X = getNewX(data)
@@ -142,7 +142,7 @@ def policyM(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", a
 		# 	print("Median after: %1.10f \n"%median)
 
 		# Receive a new datapoint
-		data = sensor_dataset.iloc[i:i+W,:]
+		data = sensor_dataset.iloc[i:i+W-1,:]
 		X = getNewX(data)
 		y = getNewY(data, S)
 		# Build a new model with the newly arrived datapoint 
@@ -169,7 +169,7 @@ def policyM(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", a
 Policy A: send model only when the new model is more accurate than the one at the edge gate
 '''
 def policyA(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
-	data = sensor_dataset.iloc[0:W,:]
+	data = sensor_dataset.iloc[0:W-1,:]
 
 	# Reshape the temperature and humidity values
 	init_X = getNewX(data)
@@ -192,7 +192,7 @@ def policyA(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 	i = 1
 	while (i + W) <= dataset_length:
 		# Receive a new datapoint
-		data = sensor_dataset.iloc[i:i+W,:]
+		data = sensor_dataset.iloc[i:i+W-1,:]
 		X = getNewX(data)
 		y = getNewY(data, S)
 		# Build a new model with the newly arrived datapoint 
@@ -247,8 +247,8 @@ def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", c
 
 	sensor_dataset = sensor_dataset.iloc[BASEN+1:,:]
 
-	data = sensor_dataset.iloc[0:W,:]
-	data_at_1 = sensor_dataset.iloc[1:1+W,:]
+	data = sensor_dataset.iloc[0:W-1,:]
+	data_at_1 = sensor_dataset.iloc[1:1+W-1,:]
 
 	# Reshape the temperature and humidity values
 	init_X_at_1 = getNewX(data_at_1)
@@ -289,7 +289,7 @@ def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", c
 	while (i + W) <= dataset_length:
 
 		# Receive a new datapoint
-		data = sensor_dataset.iloc[i:i+W,:]
+		data = sensor_dataset.iloc[i:i+W-1,:]
 		X = getNewX(data)
 		y = getNewY(data,S)
 		# Build a new model with the newly arrived datapoint 
@@ -340,7 +340,7 @@ def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", c
 Policy R: send model after a random number of received datapoints
 '''
 def policyR(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
-	data = sensor_dataset.iloc[0:W,:]
+	data = sensor_dataset.iloc[0:W-1,:]
 
 	# Reshape the temperature and humidity values
 	init_X = getNewX(data)
@@ -365,7 +365,7 @@ def policyR(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 	i = 1
 	while (i + W) <= dataset_length:
 		# Receive a new datapoint
-		data = sensor_dataset.iloc[i:i+W,:]
+		data = sensor_dataset.iloc[i:i+W-1,:]
 		X = getNewX(data)
 		y = getNewY(data, S)
 		# Build a new model with the newly arrived datapoint 
@@ -388,7 +388,7 @@ def policyR(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 	return err_diff, err_storage, init_err, comm
 
 def getRewardDistribution(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", theta = 1, B = 1):
-	data = sensor_dataset.iloc[0:W,:]
+	data = sensor_dataset.iloc[0:W-1,:]
 
 	# Reshape the temperature and humidity values
 	init_X = getNewX(data)
@@ -416,7 +416,7 @@ def getRewardDistribution(W, sensor_dataset, get_model, get_error, getNewX, getN
 	Vreward_vector = []
 	while (i + W) <= dataset_length:
 	    # Receive a new datapoint
-	    data = sensor_dataset.iloc[i:i+W,:]
+	    data = sensor_dataset.iloc[i:i+W-1,:]
 	    X = getNewX(data)
 	    y = getNewY(data, S)
 	    # Build a new model with the newly arrived datapoint 
@@ -461,8 +461,9 @@ def policyOST(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "",
 		exit(0)
 	else:
 		gamma_dist = getRewardDistribution(W, sensor_dataset.iloc[0:BASEN,:], get_model, get_error, getNewX, getNewY, S, theta, B)
+		sensor_dataset = sensor_dataset.iloc[BASEN+1:,:]
 
-	data = sensor_dataset.iloc[BASEN+1:,:]
+	data = sensor_dataset.iloc[0:W-1,:]
 
 	# Reshape the temperature and humidity values
 	init_X = getNewX(data)
@@ -499,7 +500,7 @@ def policyOST(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "",
 		futureV += [gamma_dist.cdf(theta-err_sum)*(t+1+B)-B]
 
 		# Receive a new datapoint
-		data = sensor_dataset.iloc[i:i+W,:]
+		data = sensor_dataset.iloc[i:i+W-1,:]
 		X = getNewX(data)
 		y = getNewY(data, S)
 		# Build a new model with the newly arrived datapoint 
