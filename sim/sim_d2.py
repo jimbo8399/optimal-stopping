@@ -78,7 +78,7 @@ for sensor_ind in range(len(all_sensors)):
     elif policyName=="policyC":
         err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, cusumT=5)
     elif policyName=="policyOST":
-        err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, theta = 1, B = 1)
+        err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, theta = 3, B = 5)
     else:
         sensor = all_sensors[sensor_ind].iloc[101:SIZE,:]
         err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY)
