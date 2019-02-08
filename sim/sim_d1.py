@@ -48,7 +48,8 @@ policies = {"policyE":policyE,
 			"policyA":policyA, 
 			"policyC":policyC, 
 			"policyR":policyR, 
-			"policyC":policyC
+			"policyC":policyC,
+			"policyOST":policyOST
 }
 policyName = sys.argv[4]
 applyPolicy = policies.get(policyName)
@@ -73,61 +74,61 @@ if dataset_length<100+W:
 '''
 TODO: make a method for introducing change in the distribution
 '''
-### FIRST Artificial change
-change = []
-### the start and end index is included in df slicing
-startind = len(sensor_dataset)//5
-endind = len(sensor_dataset)
-changeSize = endind-startind
-###
-offs = 0.025
-for col in sensor_dataset.columns.values:
-	if col == 'id' or col == "time":
-		emptyEntry = np.zeros((changeSize,1))
-		change += [pd.DataFrame(emptyEntry, columns=[col])]
-	if col != 'id' and col != "time":
-		mean = np.mean(sensor_dataset[col])
-		changeUp = np.linspace(0,mean*offs, changeSize/2, endpoint=False)
-		changeDown = np.linspace(mean*offs,0, changeSize/2, endpoint=False)
-		singleChange = np.concatenate([changeUp,changeDown]).reshape(changeSize,1)
-		change += [pd.DataFrame(singleChange, columns=[col])]
+# ### FIRST Artificial change
+# change = []
+# ### the start and end index is included in df slicing
+# startind = len(sensor_dataset)//5
+# endind = len(sensor_dataset)
+# changeSize = endind-startind
+# ###
+# offs = 0.025
+# for col in sensor_dataset.columns.values:
+# 	if col == 'id' or col == "time":
+# 		emptyEntry = np.zeros((changeSize,1))
+# 		change += [pd.DataFrame(emptyEntry, columns=[col])]
+# 	if col != 'id' and col != "time":
+# 		mean = np.mean(sensor_dataset[col])
+# 		changeUp = np.linspace(0,mean*offs, int(changeSize/2), endpoint=False)
+# 		changeDown = np.linspace(mean*offs,0, int(changeSize/2), endpoint=False)
+# 		singleChange = np.concatenate([changeUp,changeDown]).reshape(changeSize,1)
+# 		change += [pd.DataFrame(singleChange, columns=[col])]
 
-change = pd.concat(change, axis=1).values
-sample = sensor_dataset.loc[startind:endind].values
-amendedSample = sample+change
+# change = pd.concat(change, axis=1).values
+# sample = sensor_dataset.loc[startind:endind].values
+# amendedSample = sample+change
 
-sensor_dataset = pd.concat([sensor_dataset.loc[:startind-1],
-	pd.DataFrame(amendedSample, columns=sensor_dataset.columns.values),
-	sensor_dataset.loc[endind+1:]],
-	ignore_index=True)
+# sensor_dataset = pd.concat([sensor_dataset.loc[:startind-1],
+# 	pd.DataFrame(amendedSample, columns=sensor_dataset.columns.values),
+# 	sensor_dataset.loc[endind+1:]],
+# 	ignore_index=True)
 
-### SECOND Artificial change
-change = []
-### the start and end index is included in df slicing
-startind = len(sensor_dataset)//2
-endind = len(sensor_dataset)
-changeSize = endind-startind
-###
-offs = 0.01
-for col in sensor_dataset.columns.values:
-	if col == 'id' or col == "time":
-		emptyEntry = np.zeros((changeSize,1))
-		change += [pd.DataFrame(emptyEntry, columns=[col])]
-	if col != 'id' and col != "time":
-		mean = np.mean(sensor_dataset[col])
-		changeUp = np.linspace(0,mean*offs, changeSize/2, endpoint=False)
-		changeDown = np.linspace(mean*offs,0, changeSize/2, endpoint=False)
-		singleChange = np.concatenate([changeUp,changeDown]).reshape(changeSize,1)
-		change += [pd.DataFrame(singleChange, columns=[col])]
+# ### SECOND Artificial change
+# change = []
+# ### the start and end index is included in df slicing
+# startind = len(sensor_dataset)//2
+# endind = len(sensor_dataset)
+# changeSize = endind-startind
+# ###
+# offs = 0.01
+# for col in sensor_dataset.columns.values:
+# 	if col == 'id' or col == "time":
+# 		emptyEntry = np.zeros((changeSize,1))
+# 		change += [pd.DataFrame(emptyEntry, columns=[col])]
+# 	if col != 'id' and col != "time":
+# 		mean = np.mean(sensor_dataset[col])
+# 		changeUp = np.linspace(0,mean*offs, int(changeSize/2), endpoint=False)
+# 		changeDown = np.linspace(mean*offs,0, int(changeSize/2), endpoint=False)
+# 		singleChange = np.concatenate([changeUp,changeDown]).reshape(changeSize,1)
+# 		change += [pd.DataFrame(singleChange, columns=[col])]
 
-change = pd.concat(change, axis=1).values
-sample = sensor_dataset.loc[startind:endind].values
-amendedSample = sample+change
+# change = pd.concat(change, axis=1).values
+# sample = sensor_dataset.loc[startind:endind].values
+# amendedSample = sample+change
 
-sensor_dataset = pd.concat([sensor_dataset.loc[:startind-1],
-	pd.DataFrame(amendedSample, columns=sensor_dataset.columns.values),
-	sensor_dataset.loc[endind+1:]],
-	ignore_index=True)
+# sensor_dataset = pd.concat([sensor_dataset.loc[:startind-1],
+# 	pd.DataFrame(amendedSample, columns=sensor_dataset.columns.values),
+# 	sensor_dataset.loc[endind+1:]],
+# 	ignore_index=True)
 
 # plt.plot(sensor_dataset.loc[:,"R1"], label="R1 post change")
 # plt.legend()
@@ -144,8 +145,10 @@ if policyName=="policyM":
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, alpha=0.5)
 elif policyName=="policyC":
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, cusumT=0.5)
+elif policyName=="policyOST":
+    err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, theta = 1, B = 1)
 else:
-	sensor_dataset = im().iloc[100:SIZE,:]
+	sensor_dataset = im().iloc[101:SIZE,:]
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)
 
 result = Result(S,

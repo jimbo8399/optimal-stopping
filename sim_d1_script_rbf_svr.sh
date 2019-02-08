@@ -21,3 +21,7 @@ echo "Done window 25"
 echo "Applying Policy R"
 python sim/sim_d1.py 25 R3 rbf policyR
 echo "Done window 25"
+###########################################
+echo "Applying Policy OST"
+python sim/sim_d1.py 25 R3 rbf policyOST
+echo "Done window 25"

@@ -226,24 +226,24 @@ def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", c
 		err_diff_good, _, _, _ = policyE(W, sensor_dataset.iloc[0:BASEN,:], get_model, get_error, getNewX, getNewY, S)
 		err_diff_bad, _, _, _ = policyN(W, sensor_dataset.iloc[0:BASEN,:], get_model, get_error, getNewX, getNewY, S)
 
-	print("\nGOOOOOOD dist", err_diff_good)
-	print("\nBAAAAAAD dist", err_diff_bad)
+	# print("\nGOOOOOOD dist", err_diff_good)
+	# print("\nBAAAAAAD dist", err_diff_bad)
 
 	#good distribution
 	mean_good = np.mean(err_diff_good)
 	var_good = np.var(err_diff_good)
 	A1 = (mean_good**2)/var_good
 	B1 = var_good/mean_good
-	print("\ngood shape ", A1)
-	print("\ngood scale", B1)
+	# print("\ngood shape ", A1)
+	# print("\ngood scale", B1)
 
 	#bad distribution
 	mean_bad = np.mean(err_diff_bad)
 	var_bad = np.var(err_diff_bad)
 	A2 = (mean_bad**2)/var_bad
 	B2 = var_bad/mean_bad
-	print("\nbad shape", A2)
-	print("\nbad scale", B2)
+	# print("\nbad shape", A2)
+	# print("\nbad scale", B2)
 
 	sensor_dataset = sensor_dataset.iloc[BASEN+1:,:]
 
@@ -330,9 +330,9 @@ def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", c
 
 		# Slide the window with 1
 		i += 1
-	print("\ntreshold", cusumT)
-	print("\nG values",g)
-	print("\nerror diff:", err_diff)
+	# print("\ntreshold", cusumT)
+	# print("\nG values",g)
+	# print("\nerror diff:", err_diff)
 
 	return err_diff, err_storage, init_err, comm
 
@@ -387,7 +387,7 @@ def policyR(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 
 	return err_diff, err_storage, init_err, comm
 
-def policyOST(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", theta = 1, B = 1):
+def getRewardDistribution(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", theta = 1, B = 1):
 	data = sensor_dataset.iloc[0:W,:]
 
 	# Reshape the temperature and humidity values
@@ -410,9 +410,94 @@ def policyOST(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "",
 	err_sum = err
 
 	dataset_length = len(sensor_dataset)
+
+	i = 1
+	Vreward = 0
+	Vreward_vector = []
+	while (i + W) <= dataset_length:
+	    # Receive a new datapoint
+	    data = sensor_dataset.iloc[i:i+W,:]
+	    X = getNewX(data)
+	    y = getNewY(data, S)
+	    # Build a new model with the newly arrived datapoint 
+	    # and the discarded oldest datapoint
+	    new_model = get_model(X, y)
+	    # Evaluate
+	    new_err = get_error(new_model, X, y)
+	    err_storage += [new_err]
+
+	    init_model_err = get_error(init_model, X, y)
+	    err_diff += [abs(init_model_err-new_err)]
+
+	    err_sum += err_diff[-1]
+
+	    #DECIDE if we should update or not
+	    if err_sum <= theta:
+	        Vreward += 1
+	        Vreward_vector += [Vreward]
+	    else:
+	        Vreward = -B
+	        Vreward_vector += [Vreward]
+	        Vreward = 0
+	        init_model = new_model
+	        err_sum = new_err
+	        
+	    # Slide the window with 1
+	    i += 1
+	mean = np.mean(err_diff)
+	var = np.var(err_diff)
+
+	shape = mean**2/var
+	scale = var/mean
+
+	return gamma(shape,scale=scale)
+
+
+def policyOST(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", theta = 1, B = 1):
+	BASEN = 100
+
+	if len(sensor_dataset) < BASEN:
+		print("Insufficient ammount of data to compute the error rate median, has to be at least 100 datapoints")
+		exit(0)
+	else:
+		gamma_dist = getRewardDistribution(W, sensor_dataset.iloc[0:BASEN,:], get_model, get_error, getNewX, getNewY, S, theta, B)
+
+	data = sensor_dataset.iloc[BASEN+1:,:]
+
+	# Reshape the temperature and humidity values
+	init_X = getNewX(data)
+	# Reshape the sensor values
+	init_y = getNewY(data, S)
+	# Build a model to be sent to the Edge Gate
+	model = get_model(init_X, init_y)
+	# Evaluate the model
+	err = get_error(model, init_X, init_y)
+
+	err_diff = []
+	err_storage = [err]
+	init_err = err
+	init_model = model
+
+	comm_count = 1
+	comm = [comm_count]
+
+	err_sum = err
+
+	dataset_length = len(sensor_dataset)
+
+	t = 1
+	currentV = []
+	futureV = []
+
+	comm_count = 1
+	comm = [comm_count]
 	
 	i = 1
 	while (i + W) <= dataset_length:
+
+		currentV += [t]
+		futureV += [gamma_dist.cdf(theta-err_sum)*(t+1+B)-B]
+
 		# Receive a new datapoint
 		data = sensor_dataset.iloc[i:i+W,:]
 		X = getNewX(data)
@@ -427,8 +512,19 @@ def policyOST(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "",
 		init_model_err = get_error(init_model, X, y)
 		err_diff += [abs(init_model_err-new_err)]
 
-		err_sum += err_diff
-
 		#DECIDE if we should update or not
+		if gamma_dist.cdf(theta-err_sum)<(t+B)/(t+1+B):
+			init_model = new_model
+			err_sum = err
+			comm_count += 1
+			t = 0
+		else:
+			err_sum += err_diff[-1]
+
+		comm += [comm_count]
+		t += 1
+
+		# Slide window with 1
+		i += 1
 
 	return err_diff, err_storage, init_err, comm

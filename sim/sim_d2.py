@@ -31,7 +31,15 @@ from bin.result import Result
 
 SIZE = 275
 W = int(sys.argv[1]) # window size
-policies = {"policyE":policyE, "policyN":policyN, "policyM":policyM, "policyA":policyA, "policyC":policyC, "policyR":policyR, "policyC":policyC}
+policies = {"policyE":policyE, 
+            "policyN":policyN, 
+            "policyM":policyM, 
+            "policyA":policyA, 
+            "policyC":policyC, 
+            "policyR":policyR, 
+            "policyC":policyC,
+            "policyOST":policyOST
+}
 policyName = sys.argv[2]
 applyPolicy = policies.get(policyName)
 if not callable(applyPolicy):
@@ -69,8 +77,10 @@ for sensor_ind in range(len(all_sensors)):
         err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, alpha=0.5)
     elif policyName=="policyC":
         err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, cusumT=5)
+    elif policyName=="policyOST":
+        err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, theta = 1, B = 1)
     else:
-        sensor = all_sensors[sensor_ind].iloc[100:SIZE,:]
+        sensor = all_sensors[sensor_ind].iloc[101:SIZE,:]
         err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY)
 
     result = Result(sensor_names[sensor_ind], 
