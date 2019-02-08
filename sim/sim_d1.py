@@ -29,8 +29,8 @@ from policies.policy import *
 from bin.result import Result
 
 # 100 datapoints are used for the median delay policy, 
-# and all policies start using the data from the 100th datapoint
-SIZE = 300
+# and all policies start using the data from the 101st datapoint
+SIZE = 350
 W = int(sys.argv[1]) # window size
 S = sys.argv[2] # sensor name, choices: R1- R8
 if sys.argv[3]=='lin':
@@ -69,71 +69,72 @@ if dataset_length<100+W:
 	print("insufficient amount of data")
 	exit(1)
 
-# plt.plot(sensor_dataset.loc[:,"R1"], label="R1 unchanged")
+### FIRST Artificial change
+change = []
+### the start and end index is included in df slicing
+changeSize = 12
+startind = int(len(sensor_dataset)/2.5)
+endind = startind + changeSize
+totalLength = len(sensor_dataset) - startind
+print("First artificial change form",startind-100,"to",endind-100)
+###
+offs = 0.05
+for col in sensor_dataset.columns.values:
+	if col == 'id' or col == "time":
+		emptyEntry = np.zeros((changeSize,1))
+		change += [pd.DataFrame(emptyEntry, columns=[col])]
+	if col != 'id' and col != "time":
+		mean = np.mean(sensor_dataset[col])
+		changeUp = np.linspace(0,mean*offs, changeSize, endpoint=False)
+		# introduce randomness
+		changeUp = [x-np.random.randint(0,10)/1000 for x in changeUp]
+		changeStill = np.repeat(changeUp[-1], totalLength-changeSize)
+		# introduce randomness
+		changeStill = [x+np.random.randint(0,5)/1000 for x in changeStill]
+		singleChange = np.concatenate([changeUp,changeStill]).reshape(totalLength,1)
+		change += [pd.DataFrame(singleChange, columns=[col])]
 
-'''
-TODO: make a method for introducing change in the distribution
-'''
-# ### FIRST Artificial change
-# change = []
-# ### the start and end index is included in df slicing
-# startind = len(sensor_dataset)//5
-# endind = len(sensor_dataset)
-# changeSize = endind-startind
-# ###
-# offs = 0.025
-# for col in sensor_dataset.columns.values:
-# 	if col == 'id' or col == "time":
-# 		emptyEntry = np.zeros((changeSize,1))
-# 		change += [pd.DataFrame(emptyEntry, columns=[col])]
-# 	if col != 'id' and col != "time":
-# 		mean = np.mean(sensor_dataset[col])
-# 		changeUp = np.linspace(0,mean*offs, int(changeSize/2), endpoint=False)
-# 		changeDown = np.linspace(mean*offs,0, int(changeSize/2), endpoint=False)
-# 		singleChange = np.concatenate([changeUp,changeDown]).reshape(changeSize,1)
-# 		change += [pd.DataFrame(singleChange, columns=[col])]
+change = pd.concat(change, axis=1).values
+sample = sensor_dataset.loc[startind:].values
+amendedSample = sample+change
 
-# change = pd.concat(change, axis=1).values
-# sample = sensor_dataset.loc[startind:endind].values
-# amendedSample = sample+change
+sensor_dataset = pd.concat([sensor_dataset.loc[:startind-1],
+	pd.DataFrame(amendedSample, columns=sensor_dataset.columns.values)],
+	# sensor_dataset.loc[totalLength+1:]],
+	ignore_index=True)
 
-# sensor_dataset = pd.concat([sensor_dataset.loc[:startind-1],
-# 	pd.DataFrame(amendedSample, columns=sensor_dataset.columns.values),
-# 	sensor_dataset.loc[endind+1:]],
-# 	ignore_index=True)
+### SECOND Artificial change - Outlier-like
+change = []
+### the start and end index is included in df slicing
+changeSize = 4
+startind = int(len(sensor_dataset)/1.5)
+endind = startind + changeSize
+print("Second artificial change form",startind-100,"to",endind-100)
+###
+offs = 0.025
+for col in sensor_dataset.columns.values:
+	if col == 'id' or col == "time":
+		emptyEntry = np.zeros((changeSize,1))
+		change += [pd.DataFrame(emptyEntry, columns=[col])]
+	if col != 'id' and col != "time":
+		mean = np.mean(sensor_dataset[col])
+		changeUp = np.linspace(0,mean*offs, int(changeSize/2), endpoint=False)
+		# introduce randomness
+		changeUp = [x-np.random.randint(0,10)/1000 for x in changeUp]
+		changeDown = np.linspace(mean*offs,0, int(changeSize/2), endpoint=False)
+		# introduce randomness
+		changeDown = [x+np.random.randint(0,5)/1000 for x in changeDown]
+		singleChange = np.concatenate([changeUp,changeDown]).reshape(changeSize,1)
+		change += [pd.DataFrame(singleChange, columns=[col])]
 
-# ### SECOND Artificial change
-# change = []
-# ### the start and end index is included in df slicing
-# startind = len(sensor_dataset)//2
-# endind = len(sensor_dataset)
-# changeSize = endind-startind
-# ###
-# offs = 0.01
-# for col in sensor_dataset.columns.values:
-# 	if col == 'id' or col == "time":
-# 		emptyEntry = np.zeros((changeSize,1))
-# 		change += [pd.DataFrame(emptyEntry, columns=[col])]
-# 	if col != 'id' and col != "time":
-# 		mean = np.mean(sensor_dataset[col])
-# 		changeUp = np.linspace(0,mean*offs, int(changeSize/2), endpoint=False)
-# 		changeDown = np.linspace(mean*offs,0, int(changeSize/2), endpoint=False)
-# 		singleChange = np.concatenate([changeUp,changeDown]).reshape(changeSize,1)
-# 		change += [pd.DataFrame(singleChange, columns=[col])]
+change = pd.concat(change, axis=1).values
+sample = sensor_dataset.loc[startind:endind-1].values
+amendedSample = sample+change
 
-# change = pd.concat(change, axis=1).values
-# sample = sensor_dataset.loc[startind:endind].values
-# amendedSample = sample+change
-
-# sensor_dataset = pd.concat([sensor_dataset.loc[:startind-1],
-# 	pd.DataFrame(amendedSample, columns=sensor_dataset.columns.values),
-# 	sensor_dataset.loc[endind+1:]],
-# 	ignore_index=True)
-
-# plt.plot(sensor_dataset.loc[:,"R1"], label="R1 post change")
-# plt.legend()
-
-# plt.show()
+sensor_dataset = pd.concat([sensor_dataset.loc[:startind-1],
+	pd.DataFrame(amendedSample, columns=sensor_dataset.columns.values),
+	sensor_dataset.loc[endind+1:]],
+	ignore_index=True)
 
 def getNewX(data):
 	return data[['Temp.','Humidity']].values
