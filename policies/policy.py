@@ -217,7 +217,7 @@ def policyA(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 
 def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", cusumT = 3.3):
 
-	BASEN = 75
+	BASEN = 100
 
 	if len(sensor_dataset) < BASEN:
 		print("Insufficient ammount of data to compute the error rate median, has to be at least 100 datapoints")
@@ -464,15 +464,22 @@ def policyOST(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "",
 		sensor_dataset = sensor_dataset.iloc[BASEN+1:,:]
 
 	data = sensor_dataset.iloc[0:W-1,:]
+	data_at_1 = sensor_dataset.iloc[1:1+W-1,:]
 
 	# Reshape the temperature and humidity values
+	init_X_at_1 = getNewX(data_at_1)
 	init_X = getNewX(data)
 	# Reshape the sensor values
+	init_y_at_1 = getNewY(data_at_1, S)
 	init_y = getNewY(data, S)
 	# Build a model to be sent to the Edge Gate
+	model_at_1 = get_model(init_X_at_1, init_y_at_1)
 	model = get_model(init_X, init_y)
 	# Evaluate the model
+	err_at_1 = get_error(model_at_1, init_X, init_y)
 	err = get_error(model, init_X, init_y)
+
+	diff = abs(err_at_1-err)
 
 	err_diff = []
 	err_storage = [err]
@@ -482,7 +489,7 @@ def policyOST(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "",
 	comm_count = 1
 	comm = [comm_count]
 
-	err_sum = err
+	err_sum = diff
 
 	dataset_length = len(sensor_dataset)
 
@@ -524,6 +531,88 @@ def policyOST(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "",
 
 		comm += [comm_count]
 		t += 1
+
+		# Slide window with 1
+		i += 1
+
+	return err_diff, err_storage, init_err, comm
+
+def policyCostAware(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", alpha = 0.005):
+	# BASEN = 100
+
+	# if len(sensor_dataset) < BASEN:
+	# 	print("Insufficient ammount of data to compute the error rate median, has to be at least 100 datapoints")
+	# 	exit(0)
+	# else:
+	# 	gamma_dist = getRewardDistribution(W, sensor_dataset.iloc[0:BASEN,:], get_model, get_error, getNewX, getNewY, S, theta, B)
+		# sensor_dataset = sensor_dataset.iloc[BASEN+1:,:]
+
+	data = sensor_dataset.iloc[0:W-1,:]
+
+	# Reshape the temperature and humidity values
+	init_X = getNewX(data)
+	# Reshape the sensor values
+	init_y = getNewY(data, S)
+	# Build a model to be sent to the Edge Gate
+	model = get_model(init_X, init_y)
+	# Evaluate the model
+	err = get_error(model, init_X, init_y)
+
+	err_diff = []
+	err_storage = [err]
+	init_err = err
+	init_model = model
+
+	comm_count = 1
+	comm = [comm_count]
+
+	err_sum = err
+
+	imag_update_set = False
+	imag_err_sum_pre = err
+	imag_err_sum_post = 0
+	interm_model = None
+
+	i = 1
+	while (i + W) <= len(sensor_dataset):
+		# Receive a new datapoint
+		data = sensor_dataset.iloc[i:i+W-1,:]
+		X = getNewX(data)
+		y = getNewY(data, S)
+		# Build a new model with the newly arrived datapoint 
+		# and the discarded oldest datapoint
+		new_model = get_model(X, y)
+		# Evaluate
+		new_err = get_error(new_model, X, y)
+		err_storage += [new_err]
+
+		init_model_err = get_error(init_model, X, y)
+		err_diff += [abs(init_model_err-new_err)]
+
+		err_sum += new_err
+
+		if init_err > new_err and not imag_update_set:
+			imag_update_set = True
+			inter_model = new_model
+		elif not imag_update_set:
+			imag_err_sum_pre += new_err
+		elif imag_update_set:
+			imag_err_sum_post += get_error(inter_model, X, y)
+
+		#DECIDE if we should update or not
+		if imag_update_set: 
+			imag_err_sum = imag_err_sum_pre + imag_err_sum_post
+			if err_sum - imag_err_sum > alpha:
+				init_model = new_model
+				err_sum = err
+				comm_count += 1
+
+				imag_update_set = False
+				imag_err_sum_pre = err
+				imag_err_sum_post = 0
+				interm_model = None
+
+		comm += [comm_count]
 
 		# Slide window with 1
 		i += 1

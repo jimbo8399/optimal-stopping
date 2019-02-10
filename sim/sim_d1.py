@@ -31,6 +31,7 @@ from bin.result import Result
 # 100 datapoints are used for the median delay policy, 
 # and all policies start using the data from the 101st datapoint
 SIZE = 350
+
 W = int(sys.argv[1]) # window size
 S = sys.argv[2] # sensor name, choices: R1- R8
 if sys.argv[3]=='lin':
@@ -49,7 +50,8 @@ policies = {"policyE":policyE,
 			"policyC":policyC, 
 			"policyR":policyR, 
 			"policyC":policyC,
-			"policyOST":policyOST
+			"policyOST":policyOST,
+			"policyCostAware":policyCostAware
 }
 policyName = sys.argv[4]
 applyPolicy = policies.get(policyName)
@@ -148,6 +150,9 @@ elif policyName=="policyC":
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, cusumT=0.5)
 elif policyName=="policyOST":
     err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, theta = 1, B = 1)
+elif policyName=="policyCostAware":
+    sensor_dataset = im().iloc[101:SIZE,:]
+    err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, alpha = 0.0005)
 else:
 	sensor_dataset = im().iloc[101:SIZE,:]
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)

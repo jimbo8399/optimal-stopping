@@ -30,6 +30,7 @@ from policies.policy import *
 from bin.result import Result
 
 SIZE = 275
+
 W = int(sys.argv[1]) # window size
 policies = {"policyE":policyE, 
             "policyN":policyN, 
@@ -38,7 +39,8 @@ policies = {"policyE":policyE,
             "policyC":policyC, 
             "policyR":policyR, 
             "policyC":policyC,
-            "policyOST":policyOST
+            "policyOST":policyOST,
+            "policyCostAware":policyCostAware
 }
 policyName = sys.argv[2]
 applyPolicy = policies.get(policyName)
@@ -79,6 +81,9 @@ for sensor_ind in range(len(all_sensors)):
         err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, cusumT=5)
     elif policyName=="policyOST":
         err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, theta = 3, B = 5)
+    elif policyName=="policyCostAware":
+        sensor = all_sensors[sensor_ind].iloc[101:SIZE,:]
+        err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, alpha = 0.005)
     else:
         sensor = all_sensors[sensor_ind].iloc[101:SIZE,:]
         err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY)
