@@ -25,7 +25,3 @@ echo "Done window 25"
 echo "Applying Policy OST"
 python sim/sim_d2.py 25 policyOST
 echo "Done windows 25"
-
-echo "Applying Policy CostAware"
-python sim/sim_d2.py 25 policyCostAware
-echo "Done windows 25"

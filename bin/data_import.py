@@ -43,7 +43,7 @@ Create data file structure
 Download the needed data
 '''
 def data_init():
-    POLICIES = ['policyE','policyN', 'policyM', 'policyA', 'policyC', 'policyR', 'policyOST','policyCostAware']
+    POLICIES = ['policyE','policyN', 'policyM', 'policyA', 'policyC', 'policyR', 'policyOST']
     '''Data'''
     if "data" not in os.listdir(proj_path):
         print("Creating top directory data/")

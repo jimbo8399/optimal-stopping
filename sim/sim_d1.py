@@ -50,8 +50,7 @@ policies = {"policyE":policyE,
 			"policyC":policyC, 
 			"policyR":policyR, 
 			"policyC":policyC,
-			"policyOST":policyOST,
-			"policyCostAware":policyCostAware
+			"policyOST":policyOST
 }
 policyName = sys.argv[4]
 applyPolicy = policies.get(policyName)
@@ -149,10 +148,7 @@ if policyName=="policyM":
 elif policyName=="policyC":
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, cusumT=0.5)
 elif policyName=="policyOST":
-    err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, theta = 1, B = 1)
-elif policyName=="policyCostAware":
-    sensor_dataset = im().iloc[101:SIZE,:]
-    err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, alpha = 0.0005)
+    err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, theta = 1, B = 1.5)
 else:
 	sensor_dataset = im().iloc[101:SIZE,:]
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)
