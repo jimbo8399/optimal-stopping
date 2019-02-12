@@ -265,6 +265,10 @@ def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", c
 
 	diff = abs(err_at_1-err)
 
+	# avoiding the case where log(0)
+	if diff==0:
+		diff = (1/10**15)
+
 	good_diff = gamma.pdf(diff, a=A1, scale=B1)
 	bad_diff = gamma.pdf(diff, a=A2, scale=B2)
 
