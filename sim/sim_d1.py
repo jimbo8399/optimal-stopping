@@ -27,6 +27,7 @@ from bin.plot_d1 import *
 from svr.svr_model import k_fold_cv as get_error
 from policies.policy import *
 from bin.result import Result
+from bin.b_penalty_processing import calc_t
 
 # 100 datapoints are used for the median delay policy, 
 # and all policies start using the data from the 101st datapoint
@@ -53,6 +54,10 @@ policies = {"policyE":policyE,
 			"policyOST":policyOST
 }
 policyName = sys.argv[4]
+if len(sys.argv)==6:
+	ostPenalty = int(sys.argv[5])
+else:
+	ostPenalty = -1
 applyPolicy = policies.get(policyName)
 if not callable(applyPolicy):
 	print("Nonexistent policy")
@@ -148,10 +153,12 @@ if policyName=="policyM":
 elif policyName=="policyC":
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, cusumT=0.5)
 elif policyName=="policyOST":
-    err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, theta = 1, B = 1.5)
+    err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, theta = 1, B = ostPenalty)
 else:
 	sensor_dataset = im().iloc[101:SIZE,:]
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)
+
+waiting_time = calc_t(comm,'d1', policyName, ostPenalty=ostPenalty, kernel_name=sys.argv[3])
 
 result = Result(S,
 	err_diff,
@@ -161,8 +168,10 @@ result = Result(S,
 	W,
 	init_err,
 	SIZE,
-	kernel_name,
-	kernel_dir
+	kernel_name=kernel_name,
+	kernel_dir=kernel_dir,
+	waiting_time=waiting_time,
+	penalty_b=ostPenalty
 	)
 
 pickle.dump(result, open("results/raw_data/results_d1_"+kernel_dir+"_"+S+"_"+policyName+"_"+str(W)+".pkl","wb"))

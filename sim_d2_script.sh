@@ -23,5 +23,5 @@ python sim/sim_d2.py 25 policyN
 echo "Done window 25"
 
 echo "Applying Policy OST"
-python sim/sim_d2.py 25 policyOST
+python sim/sim_d2.py 25 policyOST 2
 echo "Done windows 25"

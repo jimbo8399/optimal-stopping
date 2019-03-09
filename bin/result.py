@@ -18,7 +18,9 @@ class Result:
 		init_error,
 		size,
 		kernel_name="",
-		kernel_dir=""
+		kernel_dir="",
+		waiting_time=[],
+		penalty_b=-1
 		):
 		self.sensor_name = sensor_name
 		self.err_diff = err_diff
@@ -31,4 +33,7 @@ class Result:
 		self.waiting_time = calc_waiting_time(communication)
 		self.kernel_name = kernel_name
 		self.kernel_dir = kernel_dir
+		self.waiting_time = waiting_time
+		self.penalty_b = penalty_b
+
 		

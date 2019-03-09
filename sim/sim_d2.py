@@ -28,6 +28,7 @@ from linreg.lin_reg_model import get_linear_regression_model as get_model
 from linreg.lin_reg_model import k_fold_cv as get_error
 from policies.policy import *
 from bin.result import Result
+from bin.b_penalty_processing import calc_t
 
 SIZE = 350
 
@@ -42,6 +43,10 @@ policies = {"policyE":policyE,
             "policyOST":policyOST
 }
 policyName = sys.argv[2]
+if len(sys.argv)==4:
+    ostPenalty = int(sys.argv[3])
+else:
+    ostPenalty = -1
 applyPolicy = policies.get(policyName)
 if not callable(applyPolicy):
     print("Nonexistent policy")
@@ -79,10 +84,12 @@ for sensor_ind in range(len(all_sensors)):
     elif policyName=="policyC":
         err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, cusumT=2)
     elif policyName=="policyOST":
-        err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, theta = 3, B = 5)
+        err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, theta = 3, B = ostPenalty)
     else:
         sensor = all_sensors[sensor_ind].iloc[101:SIZE,:]
         err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY)
+
+    waiting_time = calc_t(comm, 'd2', policyName, ostPenalty=ostPenalty, sensor=sensor_names[sensor_ind])
 
     result = Result(sensor_names[sensor_ind], 
         err_diff, 
@@ -91,7 +98,9 @@ for sensor_ind in range(len(all_sensors)):
         policyName, 
         W, 
         init_err,
-        SIZE
+        SIZE,
+        waiting_time=waiting_time,
+        penalty_b=ostPenalty
         )
     results.append(result)
 
