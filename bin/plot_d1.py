@@ -108,7 +108,7 @@ def plotErrRate(err_storage, init_err, kernel_name, policyName, kernel_dir, W, S
     plt.close(fig)
     
 '''
-Plot waiting time
+Plot waiting time in a histogram
 '''
 def plotHistForWaitingTime(t, B, kernel_name, policyName, kernel_dir, W, S, SIZE):
     fig, ax = plt.subplots()
@@ -116,9 +116,9 @@ def plotHistForWaitingTime(t, B, kernel_name, policyName, kernel_dir, W, S, SIZE
     ax.xaxis.set_major_formatter(FuncFormatter(lambda x, p: "{:g}".format(x)))
     plt.xlabel("Waiting time, t")
     plt.ylabel("Frequency")
-    plt.title("Waiting time until sending an up-to-date model for SUV sensor ["+S\
+    plt.title("Waiting time until sending an up-to-date model for HT sensor ["+S\
         +"], w="+str(W)+",\nusing Support Vector Regression with "+\
-        kernel_name+" Kernel and "+policyName+"\nand the corresponding median for the data")
+        kernel_name+" Kernel and "+policyName)
     n, bins, patches = ax.hist(t, density=False, color="green", edgecolor='black')
 
     fig.tight_layout()
@@ -129,3 +129,22 @@ def plotHistForWaitingTime(t, B, kernel_name, policyName, kernel_dir, W, S, SIZE
         plt.savefig('results/dataset_1_'+kernel_dir+'_svr/'+policyName+'/hist_waitingtime/hist_waiting_'+S+'_w_'+str(W)+'_B_'+str(B)+'.png')    
 
     plt.close(fig)
+
+'''
+Plot waiting times in a multi-boxplot
+'''
+
+def plotBoxPlotsForWaitingTime(t, B, W, S):
+
+    fig, ax  = plt.subplots()
+    plt.xlabel("OST penalty, B")
+
+    plt.title("Waiting time until sending an up-to-date model for HT sensor ["+S\
+        +"], w="+str(W)+",\nusing Support Vector Regression with RBF Kernel and policyOST")
+    plt.xticks([x for x in range(len(B))], B)
+    ax.boxplot(t)
+
+    # fig.tight_layout()
+
+    plt.savefig('results/dataset_1_rbf_svr/policyOST'+\
+        '/boxplot_waiting_'+S+'_w_'+str(W)+'.png')

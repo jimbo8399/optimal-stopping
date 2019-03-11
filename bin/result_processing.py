@@ -77,11 +77,30 @@ def plotWaitingTimeDataset2(res):
 		res.size
 	)
 
+def plotBoxPlotWaitingTimeDataset1(wt, B, w, S):
+	import bin.plot_d1 as plt1
+	plt1.plotBoxPlotsForWaitingTime(wt, B, w, S)
+
+def plotBoxPlotWaitingTimeDataset2(wt, B, w, S):
+	import bin.plot_d2 as plt2
+	plt2.plotBoxPlotsForWaitingTime(wt, B, w, S)
+
 def plotAllResults():
 	import os
 	from pathlib import Path
 	results_path = Path("results/raw_data")
 	files = os.listdir(results_path)
+
+	d1_all_waiting_times = []
+	d1_all_penalties = []
+	d1_sensor_name = None
+	d1_window_size = None
+	d2_all_waiting_times = []
+	d2_all_penalties = []
+	d2_sensor_name = None
+	d2_window_size = None
+
+
 	for filename in files:
 		if filename[:7]=="results":
 			with open(results_path/filename,"rb") as f:
@@ -95,6 +114,26 @@ def plotAllResults():
 				dataset, result = loadFile(f)
 				if dataset == 1:
 					plotWaitingTimeDataset1(result)
+					if result.policyName == "policyOST":
+						d1_all_waiting_times.append(result.waiting_time)
+						d1_all_penalties.append(result.penalty_b)
+						d1_sensor_name = result.sensor_name
+						d1_window_size = result.w
 				elif dataset == 2:
 					plotWaitingTimeDataset2(result)
+					if result.policyName == "policyOST":
+						d2_all_waiting_times.append(result.waiting_time)
+						d2_all_penalties.append(result.penalty_b)
+						d2_sensor_name = result.sensor_name
+						d2_window_size = result.w
 
+	plotBoxPlotWaitingTimeDataset1(d1_all_waiting_times,
+								d1_all_penalties,
+								d1_window_size,
+								d1_sensor_name
+								)
+	plotBoxPlotWaitingTimeDataset2(d2_all_waiting_times,
+								d2_all_penalties,
+								d2_window_size,
+								d2_sensor_name
+								)

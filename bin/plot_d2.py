@@ -109,8 +109,7 @@ def plotHistForWaitingTime(t, B, policyName, W, S, SIZE):
     plt.xlabel("Waiting time, t")
     plt.ylabel("Frequency")
     plt.title("Waiting time until sending an up-to-date model for SUV sensor ["+S\
-        +"], w="+str(W)+",\nusing Linear Regression and"+policyName+\
-        "\nand the corresponding median for the data")
+        +"], w="+str(W)+",\nusing Linear Regression and "+policyName)
     n, bins, patches = ax.hist(t, density=False, color="green", edgecolor='black')
 
     fig.tight_layout()
@@ -121,3 +120,23 @@ def plotHistForWaitingTime(t, B, policyName, W, S, SIZE):
         plt.savefig('results/dataset_2_lin_reg/'+policyName+'/hist_waitingtime/hist_waiting_'+S+'_w_'+str(W)+'_B_'+str(B)+'.png')    
 
     plt.close(fig)
+
+
+'''
+Plot waiting times in a multi-boxplot
+'''
+
+def plotBoxPlotsForWaitingTime(t, B, W, S):
+
+    fig, ax  = plt.subplots()
+    plt.xlabel("OST penalty, B")
+
+    plt.title("Waiting time until sending an up-to-date model for SUV sensor ["+S\
+        +"], w="+str(W)+",\nusing Liear Regression and policyOST")
+    plt.xticks([x for x in range(len(B))], B)
+    ax.boxplot(t)
+
+    # fig.tight_layout()
+    
+    plt.savefig('results/dataset_2_lin_reg/policyOST'+\
+        '/boxplot_waiting_'+S+'_w_'+str(W)+'.png')
