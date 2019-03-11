@@ -20,7 +20,8 @@ class Result:
 		kernel_name="",
 		kernel_dir="",
 		waiting_time=[],
-		penalty_b=-1
+		penalty_b=-1,
+		dataset=""
 		):
 		self.sensor_name = sensor_name
 		self.err_diff = err_diff
@@ -35,5 +36,6 @@ class Result:
 		self.kernel_dir = kernel_dir
 		self.waiting_time = waiting_time
 		self.penalty_b = penalty_b
+		self.dataset = dataset
 
 		

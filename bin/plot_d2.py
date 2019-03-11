@@ -98,3 +98,26 @@ def plotErrRate(err_storage, init_err, policyName, W, S):
     plt.savefig('results/dataset_2_lin_reg/'+policyName+'/err_rates_'+S+'_w_'+str(W)+'.png')
 
     plt.close(fig)
+
+    '''
+Plot waiting time
+'''
+def plotHistForWaitingTime(t, B, policyName, W, S, SIZE):
+    fig, ax = plt.subplots()
+    ax.yaxis.set_major_formatter(FuncFormatter(lambda x, p: "{:g}".format(x)))
+    ax.xaxis.set_major_formatter(FuncFormatter(lambda x, p: "{:g}".format(x)))
+    plt.xlabel("Waiting time, t")
+    plt.ylabel("Frequency")
+    plt.title("Waiting time until sending an up-to-date model for SUV sensor ["+S\
+        +"], w="+str(W)+",\nusing Linear Regression and"+policyName+\
+        "\nand the corresponding median for the data")
+    n, bins, patches = ax.hist(t, density=False, color="green", edgecolor='black')
+
+    fig.tight_layout()
+
+    if B == -1:
+        plt.savefig('results/dataset_2_lin_reg/'+policyName+'/hist_waitingtime/hist_waiting_'+S+'_w_'+str(W)+'.png')
+    else:
+        plt.savefig('results/dataset_2_lin_reg/'+policyName+'/hist_waitingtime/hist_waiting_'+S+'_w_'+str(W)+'_B_'+str(B)+'.png')    
+
+    plt.close(fig)

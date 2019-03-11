@@ -2,9 +2,9 @@ import pickle
 
 def loadFile(filename):
 	result = pickle.load(filename)
-	if type(result)==type([]):
+	if result.dataset == 'd2':
 		return 2, result
-	else:
+	elif result.dataset == 'd1':
 		return 1, result
 
 def plotForDataset1(res):
@@ -56,12 +56,22 @@ def plotForDataset2(res):
 	)
 
 def plotWaitingTimeDataset1(res):
-	import bin.plot_d1 as plt
-	plt.plotHistForPenaltyB(res.waiting_time, 
+	import bin.plot_d1 as plt1
+	plt1.plotHistForWaitingTime(res.waiting_time, 
 		res.penalty_b, 
 		res.kernel_name, 
 		res.policyName, 
 		res.kernel_dir, 
+		res.w, 
+		res.sensor_name, 
+		res.size
+	)
+
+def plotWaitingTimeDataset2(res):
+	import bin.plot_d2 as plt2
+	plt2.plotHistForWaitingTime(res.waiting_time,
+		res.penalty_b, 
+		res.policyName, 
 		res.w, 
 		res.sensor_name, 
 		res.size
@@ -79,10 +89,12 @@ def plotAllResults():
 				if dataset == 1:
 					plotForDataset1(result)
 				elif dataset==2:
-					for sensor_result in result:
-						plotForDataset2(sensor_result)
-		elif filename[:10]=='ostpenalty':
+					plotForDataset2(result)
+		elif filename[:12]=='waiting_time':
 			with open(results_path/filename,"rb") as f:
-				(dataset, alg, ostPenalty, t) = pickle.load(f)
-				print(dataset, alg, ostPenalty, t)
+				dataset, result = loadFile(f)
+				if dataset == 1:
+					plotWaitingTimeDataset1(result)
+				elif dataset == 2:
+					plotWaitingTimeDataset2(result)
 

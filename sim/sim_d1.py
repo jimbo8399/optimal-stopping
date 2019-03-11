@@ -158,7 +158,7 @@ else:
 	sensor_dataset = im().iloc[101:SIZE,:]
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)
 
-waiting_time = calc_t(comm,'d1', policyName, ostPenalty=ostPenalty, kernel_name=sys.argv[3])
+waiting_time = calc_t(comm)
 
 result = Result(S,
 	err_diff,
@@ -171,7 +171,13 @@ result = Result(S,
 	kernel_name=kernel_name,
 	kernel_dir=kernel_dir,
 	waiting_time=waiting_time,
-	penalty_b=ostPenalty
+	penalty_b=ostPenalty,
+	dataset='d1'
 	)
+
+if ostPenalty == -1:
+    pickle.dump(result, open('results/raw_data/waiting_time_'+policyName+'_d1_'+kernel_dir+'_'+S+'_'+str(W)+'.pkl','wb'))
+else:
+    pickle.dump(result,open('results/raw_data/waiting_time_'+policyName+'_'+'ostpenalty_'+str(ostPenalty)+'_d1_'+kernel_dir+'_'+S+'_'+str(W)+'.pkl','wb'))
 
 pickle.dump(result, open("results/raw_data/results_d1_"+kernel_dir+"_"+S+"_"+policyName+"_"+str(W)+".pkl","wb"))

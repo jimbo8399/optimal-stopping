@@ -64,6 +64,9 @@ def data_init():
         if pol not in os.listdir(results_path/"dataset_1_rbf_svr"):
             print("Creating directory results/dataset_1_rbf_svr/"+pol)
             os.mkdir(results_path/"dataset_1_rbf_svr"/pol)
+        if "hist_waitingtime" not in os.listdir(results_path/"dataset_1_rbf_svr"/pol):
+            os.mkdir(results_path/"dataset_1_rbf_svr"/pol/"hist_waitingtime")
+
     '''Results lin svr'''
     if "dataset_1_lin_svr" not in os.listdir(results_path):
         print("Creating directory results/dataset_1_lin_svr")
@@ -72,6 +75,9 @@ def data_init():
         if pol not in os.listdir(results_path/"dataset_1_lin_svr"):
             print("Creating directory results/dataset_1_lin_svr/"+pol)
             os.mkdir(results_path/"dataset_1_lin_svr"/pol)
+        if "hist_waitingtime" not in os.listdir(results_path/"dataset_1_lin_svr"/pol):
+            os.mkdir(results_path/"dataset_1_lin_svr"/pol/"hist_waitingtime")
+
     '''Results lin reg'''
     if "dataset_2_lin_reg" not in os.listdir(results_path):
         print("Creating directory results/dataset_2_lin_reg")
@@ -80,6 +86,8 @@ def data_init():
         if pol not in os.listdir(results_path/"dataset_2_lin_reg"):
             print("Creating directory results/dataset_2_lin_reg/"+pol)
             os.mkdir(results_path/"dataset_2_lin_reg"/pol)
+        if "hist_waitingtime" not in os.listdir(results_path/"dataset_2_lin_reg"/pol):
+            os.mkdir(results_path/"dataset_2_lin_reg"/pol/"hist_waitingtime")
 
     '''
     Fetching and Extracting DATASET 1 - HT Sensors

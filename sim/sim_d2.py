@@ -59,7 +59,7 @@ sensor_names = ["pi3"]
 all_sensors = im(sensor_names)
 
 # Results to be dumped into a pickle file
-results = []
+# results = []
 
 # Import data from each Dataset, USV=pi2, pi3, pi4, pi5
 # Getting only 60 datapoints
@@ -89,7 +89,7 @@ for sensor_ind in range(len(all_sensors)):
         sensor = all_sensors[sensor_ind].iloc[101:SIZE,:]
         err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY)
 
-    waiting_time = calc_t(comm, 'd2', policyName, ostPenalty=ostPenalty, sensor=sensor_names[sensor_ind])
+    waiting_time = calc_t(comm)
 
     result = Result(sensor_names[sensor_ind], 
         err_diff, 
@@ -100,8 +100,14 @@ for sensor_ind in range(len(all_sensors)):
         init_err,
         SIZE,
         waiting_time=waiting_time,
-        penalty_b=ostPenalty
+        penalty_b=ostPenalty,
+        dataset='d2'
         )
-    results.append(result)
+    # results.append(result)
 
-pickle.dump(results, open("results/raw_data/results_d2_"+policyName+"_"+str(W)+".pkl", "wb"))
+    if ostPenalty == -1:
+        pickle.dump(result, open('results/raw_data/waiting_time_'+policyName+'_d2_'+sensor_names[sensor_ind]+"_"+str(W)+'.pkl','wb'))
+    else:
+        pickle.dump(result,open('results/raw_data/waiting_time_'+policyName+'_'+'ostpenalty_'+str(ostPenalty)+'_d2_'+sensor_names[sensor_ind]+"_"+str(W)+'.pkl','wb'))
+
+    pickle.dump(result, open("results/raw_data/results_d2_"+policyName+'_'+sensor_names[sensor_ind]+'_'+str(W)+'.pkl', 'wb'))
