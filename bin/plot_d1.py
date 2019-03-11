@@ -112,14 +112,16 @@ Plot waiting time in a histogram
 '''
 def plotHistForWaitingTime(t, B, kernel_name, policyName, kernel_dir, W, S, SIZE):
     fig, ax = plt.subplots()
-    ax.yaxis.set_major_formatter(FuncFormatter(lambda x, p: "{:g}".format(x)))
+
     ax.xaxis.set_major_formatter(FuncFormatter(lambda x, p: "{:g}".format(x)))
+
     plt.xlabel("Waiting time, t")
     plt.ylabel("Frequency")
     plt.title("Waiting time until sending an up-to-date model for HT sensor ["+S\
         +"], w="+str(W)+",\nusing Support Vector Regression with "+\
         kernel_name+" Kernel and "+policyName)
-    n, bins, patches = ax.hist(t, density=False, color="green", edgecolor='black')
+    bins = [i for i in range(max(t))]
+    n, bins, patches = ax.hist(t, bins=bins, density=False, color="green", edgecolor='black')
 
     fig.tight_layout()
 
@@ -148,3 +150,4 @@ def plotBoxPlotsForWaitingTime(t, B, W, S):
 
     plt.savefig('results/dataset_1_rbf_svr/policyOST'+\
         '/boxplot_waiting_'+S+'_w_'+str(W)+'.png')
+    plt.close(fig)

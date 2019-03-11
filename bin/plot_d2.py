@@ -104,13 +104,15 @@ Plot waiting time
 '''
 def plotHistForWaitingTime(t, B, policyName, W, S, SIZE):
     fig, ax = plt.subplots()
-    ax.yaxis.set_major_formatter(FuncFormatter(lambda x, p: "{:g}".format(x)))
+
     ax.xaxis.set_major_formatter(FuncFormatter(lambda x, p: "{:g}".format(x)))
+
     plt.xlabel("Waiting time, t")
     plt.ylabel("Frequency")
     plt.title("Waiting time until sending an up-to-date model for SUV sensor ["+S\
         +"], w="+str(W)+",\nusing Linear Regression and "+policyName)
-    n, bins, patches = ax.hist(t, density=False, color="green", edgecolor='black')
+    bins = [i for i in range(max(t))]
+    n, bins, patches = ax.hist(t, bins=bins, density=False, color="green", edgecolor='black')
 
     fig.tight_layout()
 
@@ -140,3 +142,4 @@ def plotBoxPlotsForWaitingTime(t, B, W, S):
     
     plt.savefig('results/dataset_2_lin_reg/policyOST'+\
         '/boxplot_waiting_'+S+'_w_'+str(W)+'.png')
+    plt.close(fig)

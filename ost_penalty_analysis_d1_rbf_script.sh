@@ -1,8 +1,4 @@
 echo "Applying Policy OST"
-python sim/sim_d1.py 25 R3 rbf policyOST 1
-echo "Done window 25"
-
-echo "Applying Policy OST"
 python sim/sim_d1.py 25 R3 rbf policyOST 2
 echo "Done window 25"
 
