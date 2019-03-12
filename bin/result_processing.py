@@ -127,13 +127,13 @@ def plotAllResults():
 						d2_sensor_name = result.sensor_name
 						d2_window_size = result.w
 
-	plotBoxPlotWaitingTimeDataset1(d1_all_waiting_times,
-								d1_all_penalties,
-								d1_window_size,
-								d1_sensor_name
-								)
-	plotBoxPlotWaitingTimeDataset2(d2_all_waiting_times,
-								d2_all_penalties,
-								d2_window_size,
-								d2_sensor_name
-								)
+	# plotBoxPlotWaitingTimeDataset1(d1_all_waiting_times,
+	# 							d1_all_penalties,
+	# 							d1_window_size,
+	# 							d1_sensor_name
+	# 							)
+	# plotBoxPlotWaitingTimeDataset2(d2_all_waiting_times,
+	# 							d2_all_penalties,
+	# 							d2_window_size,
+	# 							d2_sensor_name
+	# 							)

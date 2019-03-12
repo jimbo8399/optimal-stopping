@@ -113,13 +113,18 @@ Plot waiting time in a histogram
 def plotHistForWaitingTime(t, B, kernel_name, policyName, kernel_dir, W, S, SIZE):
     fig, ax = plt.subplots()
 
-    ax.xaxis.set_major_formatter(FuncFormatter(lambda x, p: "{:g}".format(x)))
+    ax.xaxis.set_major_formatter(plt.FuncFormatter('{:.0f}'.format))
 
     plt.xlabel("Waiting time, t")
     plt.ylabel("Frequency")
-    plt.title("Waiting time until sending an up-to-date model for HT sensor ["+S\
-        +"], w="+str(W)+",\nusing Support Vector Regression with "+\
-        kernel_name+" Kernel and "+policyName)
+    if policyName=="policyOST":
+        plt.title("Waiting time until sending an up-to-date model for HT sensor ["+S\
+            +"], w="+str(W)+",\nusing Support Vector Regression with "+\
+            kernel_name+" Kernel\n and "+policyName+" and penalty B="+str(B))
+    else:
+        plt.title("Waiting time until sending an up-to-date model for HT sensor ["+S\
+            +"], w="+str(W)+",\nusing Support Vector Regression with "+\
+            kernel_name+" Kernel and "+policyName)
     bins = [i for i in range(max(t))]
     n, bins, patches = ax.hist(t, bins=bins, density=False, color="green", edgecolor='black')
 
@@ -143,10 +148,12 @@ def plotBoxPlotsForWaitingTime(t, B, W, S):
 
     plt.title("Waiting time until sending an up-to-date model for HT sensor ["+S\
         +"], w="+str(W)+",\nusing Support Vector Regression with RBF Kernel and policyOST")
-    plt.xticks([x for x in range(len(B))], B)
+    
+    ax.xaxis.set_major_formatter(plt.FuncFormatter('{:s}'.format))
     ax.boxplot(t)
+    plt.xticks(np.arange(1,len(B)+1), [str(label) for label in B])
 
-    # fig.tight_layout()
+    fig.tight_layout()
 
     plt.savefig('results/dataset_1_rbf_svr/policyOST'+\
         '/boxplot_waiting_'+S+'_w_'+str(W)+'.png')

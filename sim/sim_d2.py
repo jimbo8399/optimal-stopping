@@ -58,9 +58,6 @@ data_init()
 sensor_names = ["pi3"]
 all_sensors = im(sensor_names)
 
-# Results to be dumped into a pickle file
-# results = []
-
 # Import data from each Dataset, USV=pi2, pi3, pi4, pi5
 # Getting only 60 datapoints
 for sensor_ind in range(len(all_sensors)):
@@ -103,7 +100,6 @@ for sensor_ind in range(len(all_sensors)):
         penalty_b=ostPenalty,
         dataset='d2'
         )
-    # results.append(result)
 
     if ostPenalty == -1:
         pickle.dump(result, open('results/raw_data/waiting_time_'+policyName+'_d2_'+sensor_names[sensor_ind]+"_"+str(W)+'.pkl','wb'))
