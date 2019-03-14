@@ -143,18 +143,19 @@ Plot waiting times in a multi-boxplot
 
 def plotBoxPlotsForWaitingTime(t, B, W, S):
 
-    fig, ax  = plt.subplots()
-    plt.xlabel("OST penalty, B")
+    for s in S:
+        fig, ax  = plt.subplots()
+        plt.xlabel("OST penalty, B")
 
-    plt.title("Waiting time until sending an up-to-date model for HT sensor ["+S\
-        +"], w="+str(W)+",\nusing Support Vector Regression with RBF Kernel and policyOST")
-    
-    ax.xaxis.set_major_formatter(plt.FuncFormatter('{:s}'.format))
-    ax.boxplot(t)
-    plt.xticks(np.arange(1,len(B)+1), [str(label) for label in B])
+        plt.title("Waiting time until sending an up-to-date model for HT sensor ["+s\
+            +"], w="+str(W)+",\nusing Support Vector Regression with RBF Kernel and policyOST")
+        
+        ax.xaxis.set_major_formatter(plt.FuncFormatter('{:s}'.format))
+        ax.boxplot(t[s])
+        plt.xticks(np.arange(1,len(B[s])+1), [str(label) for label in B[s]])
 
-    fig.tight_layout()
+        fig.tight_layout()
 
-    plt.savefig('results/dataset_1_rbf_svr/policyOST'+\
-        '/boxplot_waiting_'+S+'_w_'+str(W)+'.png')
-    plt.close(fig)
+        plt.savefig('results/dataset_1_rbf_svr/policyOST'+\
+            '/boxplot_waiting_'+s+'_w_'+str(W)+'.png')
+        plt.close(fig)

@@ -343,7 +343,7 @@ def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", c
 '''
 Policy R: send model after a random number of received datapoints
 '''
-def policyR(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
+def policyR(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", probR=10):
 	data = sensor_dataset.iloc[0:W-1,:]
 
 	# Reshape the temperature and humidity values
@@ -365,7 +365,7 @@ def policyR(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = ""):
 
 	dataset_length = len(sensor_dataset)
 	# Generate a list of random length with random unique waiting times
-	random_waiting = set(np.random.randint(1+W, dataset_length, 10))
+	random_waiting = set(np.random.randint(1+W, dataset_length, probR))
 	i = 1
 	while (i + W) <= dataset_length:
 		# Receive a new datapoint

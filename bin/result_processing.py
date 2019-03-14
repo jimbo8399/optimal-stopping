@@ -91,13 +91,13 @@ def plotAllResults():
 	results_path = Path("results/raw_data")
 	files = os.listdir(results_path)
 
-	d1_all_waiting_times = []
-	d1_all_penalties = []
-	d1_sensor_name = None
+	d1_all_waiting_times = {}
+	d1_all_penalties = {}
+	d1_sensor_name = []
 	d1_window_size = None
-	d2_all_waiting_times = []
-	d2_all_penalties = []
-	d2_sensor_name = None
+	d2_all_waiting_times = {}
+	d2_all_penalties = {}
+	d2_sensor_name = []
 	d2_window_size = None
 
 
@@ -115,25 +115,33 @@ def plotAllResults():
 				if dataset == 1:
 					plotWaitingTimeDataset1(result)
 					if result.policyName == "policyOST":
-						d1_all_waiting_times.append(result.waiting_time)
-						d1_all_penalties.append(result.penalty_b)
-						d1_sensor_name = result.sensor_name
+						if result.sensor_name not in d1_all_waiting_times:
+							d1_all_waiting_times[result.sensor_name] = []
+						d1_all_waiting_times[result.sensor_name].append(result.waiting_time)
+						if result.sensor_name not in d1_all_penalties:
+							d1_all_penalties[result.sensor_name] = []
+						d1_all_penalties[result.sensor_name].append(result.penalty_b)
+						d1_sensor_name.append(result.sensor_name)
 						d1_window_size = result.w
 				elif dataset == 2:
 					plotWaitingTimeDataset2(result)
 					if result.policyName == "policyOST":
-						d2_all_waiting_times.append(result.waiting_time)
-						d2_all_penalties.append(result.penalty_b)
-						d2_sensor_name = result.sensor_name
+						if result.sensor_name not in d2_all_waiting_times:
+							d2_all_waiting_times[result.sensor_name] = []
+						d2_all_waiting_times[result.sensor_name].append(result.waiting_time)
+						if result.sensor_name not in d2_all_penalties:
+							d2_all_penalties[result.sensor_name] = []
+						d2_all_penalties[result.sensor_name].append(result.penalty_b)
+						d2_sensor_name.append(result.sensor_name)
 						d2_window_size = result.w
 
-	# plotBoxPlotWaitingTimeDataset1(d1_all_waiting_times,
-	# 							d1_all_penalties,
-	# 							d1_window_size,
-	# 							d1_sensor_name
-	# 							)
-	# plotBoxPlotWaitingTimeDataset2(d2_all_waiting_times,
-	# 							d2_all_penalties,
-	# 							d2_window_size,
-	# 							d2_sensor_name
-	# 							)
+	plotBoxPlotWaitingTimeDataset1(d1_all_waiting_times,
+								d1_all_penalties,
+								d1_window_size,
+								d1_sensor_name
+								)
+	plotBoxPlotWaitingTimeDataset2(d2_all_waiting_times,
+								d2_all_penalties,
+								d2_window_size,
+								d2_sensor_name
+								)

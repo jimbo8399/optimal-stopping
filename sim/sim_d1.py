@@ -54,10 +54,16 @@ policies = {"policyE":policyE,
 			"policyOST":policyOST
 }
 policyName = sys.argv[4]
-if len(sys.argv)==6:
+if policyName=='policyOST' and len(sys.argv)==6:
 	ostPenalty = int(sys.argv[5])
 else:
 	ostPenalty = -1
+
+if policyName=='policyR' and len(sys.argv)==6:
+	probR = int(sys.argv[5])
+else:
+	probR = 10
+
 applyPolicy = policies.get(policyName)
 if not callable(applyPolicy):
 	print("Nonexistent policy")
@@ -154,6 +160,9 @@ elif policyName=="policyC":
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, cusumT=0.5)
 elif policyName=="policyOST":
     err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, theta = 1, B = ostPenalty)
+elif policyName=="policyR":
+	sensor_dataset = im().iloc[101:SIZE,:]
+	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, probR=probR)
 else:
 	sensor_dataset = im().iloc[101:SIZE,:]
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)

@@ -170,21 +170,19 @@ Imports the whole dataset from GNFUV
 Data contains datasets from 4 different sources
 Returns: a list with all pandas dataframes
 '''
-def import_dataset_2(sensors):
-    dfs = []
-    if "pi2" in sensors:
-        dfs += [import_sensor_from_dataset_2(str(PATH_DATASET_2 / 
-                             "pi2"/"gnfuv-temp-exp1-55d487b85b-5g2xh_1.0.csv"))]
-    if "pi3" in sensors:
-        dfs += [import_sensor_from_dataset_2(str(PATH_DATASET_2 /
-                             "pi3"/"gnfuv-temp-exp1-55d487b85b-2bl8b_1.0.csv"))]
-    if "pi4" in sensors:
-        dfs += [import_sensor_from_dataset_2(str(PATH_DATASET_2 /
-                             "pi4"/"gnfuv-temp-exp1-55d487b85b-xcl97_1.0.csv"))]
-    if "pi5" in sensors:
-        dfs += [import_sensor_from_dataset_2(str(PATH_DATASET_2 /
-                             "pi5"/"gnfuv-temp-exp1-55d487b85b-5ztk8_1.0.csv"))]
-    return dfs
+def import_dataset_2(sensor):
+    if "pi2" == sensor:
+        return import_sensor_from_dataset_2(str(PATH_DATASET_2 / 
+                             "pi2"/"gnfuv-temp-exp1-55d487b85b-5g2xh_1.0.csv"))
+    if "pi3" == sensor:
+        return import_sensor_from_dataset_2(str(PATH_DATASET_2 /
+                             "pi3"/"gnfuv-temp-exp1-55d487b85b-2bl8b_1.0.csv"))
+    if "pi4" == sensor:
+        return import_sensor_from_dataset_2(str(PATH_DATASET_2 /
+                             "pi4"/"gnfuv-temp-exp1-55d487b85b-xcl97_1.0.csv"))
+    if "pi5" == sensor:
+        return import_sensor_from_dataset_2(str(PATH_DATASET_2 /
+                             "pi5"/"gnfuv-temp-exp1-55d487b85b-5ztk8_1.0.csv"))
 
 '''
 Import the whole dataset from the HT_Sensors

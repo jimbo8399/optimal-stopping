@@ -3,20 +3,14 @@ from pathlib import Path
 import numpy as np
 from scipy import stats
 from bin.result_processing import loadFile
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
+from statsmodels.stats.multicomp import MultiComparison
+import matplotlib.pyplot as plt
 
 results_path = Path("results/raw_data")
 files = os.listdir(results_path)
 
-d1_all_waiting_times = []
-d1_all_penalties = []
-d1_sensor_name = None
-d1_window_size = None
 d1_data = []
-
-d2_all_waiting_times = []
-d2_all_penalties = []
-d2_sensor_name = None
-d2_window_size = None
 d2_data = []
 
 
@@ -42,27 +36,25 @@ f, p = stats.f_oneway(data[data['Policy'] == 'policyA'].Waiting,
                       data[data['Policy'] == 'policyOST'].Waiting)
  
 print ('One-way ANOVA')
-print ('=============')
  
 print ('F value:', f)
-print ('P value: {}'.format(p))
-if p <= 0.5:
+if p <= 0.05:
+	print ('P value: {} <= 0.05'.format(p))
 	print("=> Reject H0\n")
 else:
+	print ('P value: {} > 0.05'.format(p))
 	print("=> Fail to reject H0\n")
 
 '''
 Perform Tukey T-Test
 '''
 
-from statsmodels.stats.multicomp import pairwise_tukeyhsd
-from statsmodels.stats.multicomp import MultiComparison
-
 mc = MultiComparison(data['Waiting'], data['Policy'])
-result = mc.tukeyhsd()
+result = mc.tukeyhsd(alpha=0.05)
  
-print(result)
-print(mc.groupsunique)
+result.plot_simultaneous(comparison_name='policyOST')
+plt.savefig('results/svr_rbf_waiting_plot_diff_means'+'.png')
+print("================================================")
 
 print("\n\n===For Dataset 2 using Linear Regression===")
 data = np.rec.array(d2_data, dtype = [('Policy','|U10'),('Waiting', '<i8')])
@@ -73,24 +65,22 @@ f, p = stats.f_oneway(data[data['Policy'] == 'policyA'].Waiting,
                       data[data['Policy'] == 'policyOST'].Waiting)
  
 print ('One-way ANOVA')
-print ('=============')
  
 print ('F value:', f)
-print ('P value: {}'.format(p))
-if p <= 0.5:
+if p <= 0.05:
+	print ('P value: {} <= 0.05'.format(p))
 	print("=> Reject H0\n")
 else:
+	print ('P value: {} > 0.05'.format(p))
 	print("=> Fail to reject H0\n")
 
 '''
 Perform Tukey T-Test
 '''
 
-from statsmodels.stats.multicomp import pairwise_tukeyhsd
-from statsmodels.stats.multicomp import MultiComparison
-
 mc = MultiComparison(data['Waiting'], data['Policy'])
-result = mc.tukeyhsd()
+result = mc.tukeyhsd(alpha=0.05)
  
-print(result)
-print(mc.groupsunique)
+result.plot_simultaneous(comparison_name='policyOST')
+plt.savefig('results/lin_reg_waiting_plot_diff_means'+'.png')
+print("\n\n===========================================")

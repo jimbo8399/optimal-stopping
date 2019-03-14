@@ -42,11 +42,17 @@ policies = {"policyE":policyE,
             "policyC":policyC,
             "policyOST":policyOST
 }
-policyName = sys.argv[2]
-if len(sys.argv)==4:
-    ostPenalty = int(sys.argv[3])
+policyName = sys.argv[3]
+if policyName=='policyOST' and len(sys.argv)==5:
+    ostPenalty = int(sys.argv[4])
 else:
     ostPenalty = -1
+
+if policyName=='policyR' and len(sys.argv)==5:
+    probR = int(sys.argv[4])
+else:
+    probR = 10
+
 applyPolicy = policies.get(policyName)
 if not callable(applyPolicy):
     print("Nonexistent policy")
@@ -55,55 +61,57 @@ if not callable(applyPolicy):
 # Initialising data structure
 data_init()
 # sensor_names = ["pi2","pi3","pi4","pi5"]
-sensor_names = ["pi3"]
-all_sensors = im(sensor_names)
+sensor_name = sys.argv[2]
+sensor_data = im(sensor_name)
 
 # Import data from each Dataset, USV=pi2, pi3, pi4, pi5
 # Getting only 60 datapoints
-for sensor_ind in range(len(all_sensors)):
-    sensor = all_sensors[sensor_ind].iloc[:SIZE,:]
+sensor = sensor_data.iloc[:SIZE,:]
 
-    dataset_length = len(sensor)
+dataset_length = len(sensor)
 
-    if dataset_length<W:
-        print("insufficient amount of data")
-        exit(1)
+if dataset_length<W:
+    print("insufficient amount of data")
+    exit(1)
 
-    def getNewX(data):
-        return data.temperature.values.reshape(-1,1)
+def getNewX(data):
+    return data.temperature.values.reshape(-1,1)
 
-    def getNewY(data, S=None):
-        return data.humidity.values.reshape(-1,1)
+def getNewY(data, S=None):
+    return data.humidity.values.reshape(-1,1)
 
-    print("Sensor "+sensor_names[sensor_ind])
-    if policyName=="policyM":
-        err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, alpha=0.5)
-    elif policyName=="policyC":
-        err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, cusumT=2)
-    elif policyName=="policyOST":
-        err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, theta = 3, B = ostPenalty)
-    else:
-        sensor = all_sensors[sensor_ind].iloc[101:SIZE,:]
-        err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY)
+print("Sensor "+sensor_name)
+if policyName=="policyM":
+    err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, alpha=0.5)
+elif policyName=="policyC":
+    err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, cusumT=2)
+elif policyName=="policyOST":
+    err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, theta = 3, B = ostPenalty)
+elif policyName=="policyR":
+    sensor = sensor_data.iloc[101:SIZE,:]
+    err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, probR=probR)
+else:
+    sensor = sensor_data.iloc[101:SIZE,:]
+    err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY)
 
-    waiting_time = calc_t(comm)
+waiting_time = calc_t(comm)
 
-    result = Result(sensor_names[sensor_ind], 
-        err_diff, 
-        err_storage, 
-        comm, 
-        policyName, 
-        W, 
-        init_err,
-        SIZE,
-        waiting_time=waiting_time,
-        penalty_b=ostPenalty,
-        dataset='d2'
-        )
+result = Result(sensor_name, 
+    err_diff, 
+    err_storage, 
+    comm, 
+    policyName, 
+    W, 
+    init_err,
+    SIZE,
+    waiting_time=waiting_time,
+    penalty_b=ostPenalty,
+    dataset='d2'
+    )
 
-    if ostPenalty == -1:
-        pickle.dump(result, open('results/raw_data/waiting_time_'+policyName+'_d2_'+sensor_names[sensor_ind]+"_"+str(W)+'.pkl','wb'))
-    else:
-        pickle.dump(result,open('results/raw_data/waiting_time_'+policyName+'_'+'ostpenalty_'+str(ostPenalty)+'_d2_'+sensor_names[sensor_ind]+"_"+str(W)+'.pkl','wb'))
+if ostPenalty == -1:
+    pickle.dump(result, open('results/raw_data/waiting_time_'+policyName+'_d2_'+sensor_name+"_"+str(W)+'.pkl','wb'))
+else:
+    pickle.dump(result,open('results/raw_data/waiting_time_'+policyName+'_'+'ostpenalty_'+str(ostPenalty)+'_d2_'+sensor_name+"_"+str(W)+'.pkl','wb'))
 
-    pickle.dump(result, open("results/raw_data/results_d2_"+policyName+'_'+sensor_names[sensor_ind]+'_'+str(W)+'.pkl', 'wb'))
+pickle.dump(result, open("results/raw_data/results_d2_"+policyName+'_'+sensor_name+'_'+str(W)+'.pkl', 'wb'))

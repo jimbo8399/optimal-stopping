@@ -1,56 +1,113 @@
 echo "Applying Policy OST"
-python sim/sim_d2.py 25 policyOST 2
+python sim/sim_d2.py 25 pi3 policyOST 2
 echo "Done windows 25"
 
 echo "Applying Policy OST"
-python sim/sim_d2.py 25 policyOST 3
+python sim/sim_d2.py 25 pi3 policyOST 3
 echo "Done windows 25"
 
 echo "Applying Policy OST"
-python sim/sim_d2.py 25 policyOST 4
+python sim/sim_d2.py 25 pi3 policyOST 4
 echo "Done windows 25"
 
 echo "Applying Policy OST"
-python sim/sim_d2.py 25 policyOST 5
+python sim/sim_d2.py 25 pi3 policyOST 5
 echo "Done windows 25"
 
 echo "Applying Policy OST"
-python sim/sim_d2.py 25 policyOST 6
+python sim/sim_d2.py 25 pi3 policyOST 6
 echo "Done windows 25"
 
 echo "Applying Policy OST"
-python sim/sim_d2.py 25 policyOST 7
+python sim/sim_d2.py 25 pi3 policyOST 7
 echo "Done windows 25"
 
 echo "Applying Policy OST"
-python sim/sim_d2.py 25 policyOST 8
+python sim/sim_d2.py 25 pi3 policyOST 8
 echo "Done windows 25"
 
 echo "Applying Policy OST"
-python sim/sim_d2.py 25 policyOST 9
+python sim/sim_d2.py 25 pi3 policyOST 9
 echo "Done windows 25"
 
 echo "Applying Policy OST"
-python sim/sim_d2.py 25 policyOST 10
+python sim/sim_d2.py 25 pi3 policyOST 10
 echo "Done windows 25"
 
 echo "Applying Policy OST"
-python sim/sim_d2.py 25 policyOST 11
+python sim/sim_d2.py 25 pi3 policyOST 11
 echo "Done windows 25"
 
 echo "Applying Policy OST"
-python sim/sim_d2.py 25 policyOST 12
+python sim/sim_d2.py 25 pi3 policyOST 12
 echo "Done windows 25"
 
 echo "Applying Policy OST"
-python sim/sim_d2.py 25 policyOST 13
+python sim/sim_d2.py 25 pi3 policyOST 13
 echo "Done windows 25"
 
 echo "Applying Policy OST"
-python sim/sim_d2.py 25 policyOST 14
+python sim/sim_d2.py 25 pi3 policyOST 14
 echo "Done windows 25"
 
 echo "Applying Policy OST"
-python sim/sim_d2.py 25 policyOST 15
+python sim/sim_d2.py 25 pi3 policyOST 15
 echo "Done windows 25"
 
+################################################
+
+echo "Applying Policy OST"
+python sim/sim_d2.py 25 pi4 policyOST 2
+echo "Done windows 25"
+
+echo "Applying Policy OST"
+python sim/sim_d2.py 25 pi4 policyOST 3
+echo "Done windows 25"
+
+echo "Applying Policy OST"
+python sim/sim_d2.py 25 pi4 policyOST 4
+echo "Done windows 25"
+
+echo "Applying Policy OST"
+python sim/sim_d2.py 25 pi4 policyOST 5
+echo "Done windows 25"
+
+echo "Applying Policy OST"
+python sim/sim_d2.py 25 pi4 policyOST 6
+echo "Done windows 25"
+
+echo "Applying Policy OST"
+python sim/sim_d2.py 25 pi4 policyOST 7
+echo "Done windows 25"
+
+echo "Applying Policy OST"
+python sim/sim_d2.py 25 pi4 policyOST 8
+echo "Done windows 25"
+
+echo "Applying Policy OST"
+python sim/sim_d2.py 25 pi4 policyOST 9
+echo "Done windows 25"
+
+echo "Applying Policy OST"
+python sim/sim_d2.py 25 pi4 policyOST 10
+echo "Done windows 25"
+
+echo "Applying Policy OST"
+python sim/sim_d2.py 25 pi4 policyOST 11
+echo "Done windows 25"
+
+echo "Applying Policy OST"
+python sim/sim_d2.py 25 pi4 policyOST 12
+echo "Done windows 25"
+
+echo "Applying Policy OST"
+python sim/sim_d2.py 25 pi4 policyOST 13
+echo "Done windows 25"
+
+echo "Applying Policy OST"
+python sim/sim_d2.py 25 pi4 policyOST 14
+echo "Done windows 25"
+
+echo "Applying Policy OST"
+python sim/sim_d2.py 25 pi4 policyOST 15
+echo "Done windows 25"
