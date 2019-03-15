@@ -125,8 +125,7 @@ def plotHistForWaitingTime(t, B, kernel_name, policyName, kernel_dir, W, S, SIZE
         plt.title("Waiting time until sending an up-to-date model for HT sensor ["+S\
             +"], w="+str(W)+",\nusing Support Vector Regression with "+\
             kernel_name+" Kernel and "+policyName)
-    bins = [i for i in range(max(t))]
-    n, bins, patches = ax.hist(t, bins=bins, density=False, color="green", edgecolor='black')
+    n, bins, patches = ax.hist(t, density=False, color="green", edgecolor='black')
 
     fig.tight_layout()
 

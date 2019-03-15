@@ -48,10 +48,10 @@ if policyName=='policyOST' and len(sys.argv)==5:
 else:
     ostPenalty = -1
 
+print(sys.argv)
 if policyName=='policyR' and len(sys.argv)==5:
     probR = int(sys.argv[4])
-else:
-    probR = 10
+    print(probR)
 
 applyPolicy = policies.get(policyName)
 if not callable(applyPolicy):
@@ -69,6 +69,7 @@ sensor_data = im(sensor_name)
 sensor = sensor_data.iloc[:SIZE,:]
 
 dataset_length = len(sensor)
+print(dataset_length)
 
 if dataset_length<W:
     print("insufficient amount of data")
@@ -94,7 +95,9 @@ else:
     sensor = sensor_data.iloc[101:SIZE,:]
     err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY)
 
+print(comm)
 waiting_time = calc_t(comm)
+print(waiting_time)
 
 result = Result(sensor_name, 
     err_diff, 

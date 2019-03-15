@@ -364,8 +364,14 @@ def policyR(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", p
 	comm = [comm_count]
 
 	dataset_length = len(sensor_dataset)
-	# Generate a list of random length with random unique waiting times
-	random_waiting = set(np.random.randint(1+W, dataset_length, probR))
+
+	# Generate a list of random length with random unique update indices
+	random_updating = []
+	while len(random_updating)<probR-1:
+		randind = np.random.randint(1, dataset_length-W)
+		if randind not in random_updating:
+			random_updating += [randind]
+
 	i = 1
 	while (i + W) <= dataset_length:
 		# Receive a new datapoint
@@ -381,7 +387,7 @@ def policyR(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", p
 
 		init_model_err = get_error(init_model, X, y)
 		err_diff += [abs(init_model_err-new_err)]
-		if i in random_waiting:
+		if i in random_updating:
 			init_model = new_model
 			comm_count += 1
 		comm += [comm_count]
@@ -504,7 +510,7 @@ def policyOST(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "",
 	comm_count = 1
 	comm = [comm_count]
 	
-	i = 1
+	i = 2
 	while (i + W) <= dataset_length:
 
 		currentV += [t]

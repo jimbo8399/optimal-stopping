@@ -115,8 +115,7 @@ def plotHistForWaitingTime(t, B, policyName, W, S, SIZE):
     else:
         plt.title("Waiting time until sending an up-to-date model for SUV sensor ["+S\
             +"], w="+str(W)+",\nusing Linear Regression and "+policyName)
-    bins = [i for i in range(max(t))]
-    n, bins, patches = ax.hist(t, bins=bins, density=False, color="green", edgecolor='black')
+    n, bins, patches = ax.hist(t, density=False, color="green", edgecolor='black')
 
     fig.tight_layout()
 
