@@ -57,7 +57,6 @@ for sensor_name in d1_data:
 
 	mc = MultiComparison(data['Waiting'], data['Policy'])
 	result = mc.tukeyhsd(alpha=0.05)
-	print(result.summary())
 	with open('results/svr_rbf_'+sensor_name+'_waiting_plot_diff_means.txt', 'w') as f:
 		f.write(str(result.summary()))
 	 

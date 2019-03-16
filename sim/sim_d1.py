@@ -168,7 +168,6 @@ else:
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)
 
 waiting_time = calc_t(comm)
-print(waiting_time)
 
 result = Result(S,
 	err_diff,
