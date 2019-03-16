@@ -34,6 +34,7 @@ numpy=1.15.4=py37h7e9f1db_0
 numpy-base=1.15.4=py37hde5b4d6_0
 openssl=1.1.1a=h7b6447c_0
 pandas=0.24.1=py37he6710b0_0
+patsy=0.5.1=py37_0
 pcre=8.42=h439df22_0
 pip=19.0.1=py37_0
 pyparsing=2.3.1=py37_0
@@ -49,6 +50,7 @@ setuptools=40.7.3=py37_0
 sip=4.19.8=py37hf484d3e_0
 six=1.12.0=py37_0
 sqlite=3.26.0=h7b6447c_0
+statsmodels=0.9.0=py37h035aef0_0
 tk=8.6.8=hbc83047_0
 tornado=5.1.1=py37h7b6447c_0
 wheel=0.32.3=py37_0
