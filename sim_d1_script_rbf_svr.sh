@@ -19,11 +19,11 @@ python sim/sim_d1.py 25 R3 rbf policyM
 echo "Done window 25"
 ###########################################
 echo "Applying Policy R"
-python sim/sim_d1.py 25 R3 rbf policyR 3
+python sim/sim_d1.py 25 R3 rbf policyR 4
 echo "Done window 25"
 ###########################################
 echo "Applying Policy OST"
-python sim/sim_d1.py 25 R3 rbf policyOST 9
+python sim/sim_d1.py 25 R3 rbf policyOST 5
 echo "Done window 25"
 
 echo "Applying Policy C"
@@ -47,9 +47,9 @@ python sim/sim_d1.py 25 R5 rbf policyM
 echo "Done window 25"
 ###########################################
 echo "Applying Policy R"
-python sim/sim_d1.py 25 R5 rbf policyR 3
+python sim/sim_d1.py 25 R5 rbf policyR 4
 echo "Done window 25"
 ###########################################
 echo "Applying Policy OST"
-python sim/sim_d1.py 25 R5 rbf policyOST 8
+python sim/sim_d1.py 25 R5 rbf policyOST 3
 echo "Done window 25"

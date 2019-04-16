@@ -23,7 +23,7 @@ python sim/sim_d2.py 25 pi3 policyN
 echo "Done window 25"
 
 echo "Applying Policy OST"
-python sim/sim_d2.py 25 pi3 policyOST 4
+python sim/sim_d2.py 25 pi3 policyOST 14
 echo "Done windows 25"
 
 #############################################
@@ -53,5 +53,5 @@ python sim/sim_d2.py 25 pi4 policyN
 echo "Done window 25"
 
 echo "Applying Policy OST"
-python sim/sim_d2.py 25 pi4 policyOST 14
+python sim/sim_d2.py 25 pi4 policyOST 8
 echo "Done windows 25"

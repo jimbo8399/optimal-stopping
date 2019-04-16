@@ -73,8 +73,6 @@ if not callable(applyPolicy):
 data_init()
 sensor_dataset = im().iloc[0:SIZE,:]
 
-# plt.plot(sensor_dataset.loc[:,"R1"])
-
 dataset_length = len(sensor_dataset)
 
 if dataset_length<100+W:
@@ -85,17 +83,17 @@ if dataset_length<100+W:
 change = []
 ### the start and end index is included in df slicing
 changeSize = 12
-startind = int(len(sensor_dataset)/2.5)
+startind = int(len(sensor_dataset)/2)
 endind = startind + changeSize
 totalLength = len(sensor_dataset) - startind
-print("First artificial change from",startind-100,"to",endind-100)
+print("First artificial change from",startind-(100+W))
 ###
-offs = 0.05
+offs = 0.1
 for col in sensor_dataset.columns.values:
-	if col == 'id' or col == "time":
-		emptyEntry = np.zeros((changeSize,1))
+	if col == 'id' or col == "time"  or col == "Temp." or col == "Humidity":
+		emptyEntry = np.zeros((totalLength,1))
 		change += [pd.DataFrame(emptyEntry, columns=[col])]
-	if col != 'id' and col != "time":
+	if col != 'id' and col != "time"  and col != "Temp." and col != "Humidity":
 		mean = np.mean(sensor_dataset[col])
 		changeUp = np.linspace(0,mean*offs, changeSize, endpoint=False)
 		# introduce randomness
@@ -121,14 +119,14 @@ change = []
 changeSize = 4
 startind = int(len(sensor_dataset)/1.5)
 endind = startind + changeSize
-print("Second artificial change form",startind-100,"to",endind-100)
+print("Second artificial change form",startind-(100+W),"to",endind-(100+W))
 ###
 offs = 0.025
 for col in sensor_dataset.columns.values:
-	if col == 'id' or col == "time":
+	if col == 'id' or col == "time" or col == "Temp." or col == "Humidity":
 		emptyEntry = np.zeros((changeSize,1))
 		change += [pd.DataFrame(emptyEntry, columns=[col])]
-	if col != 'id' and col != "time":
+	if col != 'id' and col != "time" and col != "Temp." and col != "Humidity":
 		mean = np.mean(sensor_dataset[col])
 		changeUp = np.linspace(0,mean*offs, int(changeSize/2), endpoint=False)
 		# introduce randomness
