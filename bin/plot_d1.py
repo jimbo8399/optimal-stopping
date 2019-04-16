@@ -144,10 +144,10 @@ def plotBoxPlotsForWaitingTime(t, B, W, S):
 
     for s in S:
         fig, ax  = plt.subplots()
-        plt.xlabel("OST penalty, B")
+        plt.xlabel("OP penalty, B")
 
         plt.title("Waiting time until sending an up-to-date model for HT sensor ["+s\
-            +"], w="+str(W)+",\nusing Support Vector Regression with RBF Kernel and policyOST")
+            +"], w="+str(W)+",\nusing Support Vector Regression with RBF Kernel and policyOP")
         
         ax.xaxis.set_major_formatter(plt.FuncFormatter('{:s}'.format))
         ax.boxplot(t[s])
