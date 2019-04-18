@@ -2,7 +2,7 @@
 Level 5 project on Optimal Stopping Theory
 
 ### Abstract to unpublished paper: ###
-This paper explores a sequential decision making methodology 
+This project explores a sequential decision making methodology 
 of when to update statistical learning models in Intelligent 
 Edge Computing Devices given underlying changesin the 
 contextual data distribution. The proposed model update 
