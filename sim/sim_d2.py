@@ -83,7 +83,7 @@ if policyName=="policyM":
 elif policyName=="policyC":
     err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, cusumT=2)
 elif policyName=="policyOST":
-    err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, theta = 3, B = ostPenalty)
+    err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, theta = 15, B = ostPenalty)
 elif policyName=="policyR":
     sensor = sensor_data.iloc[101:SIZE,:]
     err_diff, err_storage, init_err, comm = applyPolicy(W, sensor, get_model, get_error, getNewX, getNewY, probR=probR)

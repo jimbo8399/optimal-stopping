@@ -265,12 +265,12 @@ def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", c
 
 	diff = abs(err_at_1-err)
 
-	# avoiding the case where log(0)
-	if diff==0:
-		diff = (1/10**15)
+	# # avoiding the case where log(0)
+	# if diff==0:
+	# 	diff = (1/10**15)
 
-	good_diff = gamma.pdf(diff, a=A1, scale=B1)
-	bad_diff = gamma.pdf(diff, a=A2, scale=B2)
+	good_diff = gamma.pdf(diff, a=A1, scale=B1) + 0.000000001
+	bad_diff = gamma.pdf(diff, a=A2, scale=B2) + 0.000000001
 
 	err_diff = [diff]
 	err_storage = [err, err_at_1]
@@ -307,8 +307,9 @@ def policyC(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", c
 		diff = abs(init_model_err-new_err)
 		err_diff += [diff]
 
-		good_diff = gamma.pdf(diff, a=A1, scale=B1)
-		bad_diff = gamma.pdf(diff, a=A2, scale=B2)
+		# add a small value to avoid log(0) or division by 0
+		good_diff = gamma.pdf(diff, a=A1, scale=B1) + 0.000000001
+		bad_diff = gamma.pdf(diff, a=A2, scale=B2) + 0.000000001
 		
 		log_ratio = np.log(bad_diff/good_diff)
 		log_sum += log_ratio
@@ -365,12 +366,9 @@ def policyR(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S = "", p
 
 	dataset_length = len(sensor_dataset)
 
-	# Generate a list of random length with random unique update indices
-	random_updating = []
-	while len(random_updating)<probR-1:
-		randind = np.random.randint(1, dataset_length-W)
-		if randind not in random_updating:
-			random_updating += [randind]
+	# Generate a list of random unique update indices
+	all_indices = list(range(1,dataset_length-W))
+	random_updating = np.random.choice(all_indices, probR, replace=False)
 
 	i = 1
 	while (i + W) <= dataset_length:

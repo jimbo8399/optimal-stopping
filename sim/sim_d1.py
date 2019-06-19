@@ -79,6 +79,8 @@ if dataset_length<100+W:
 	print("insufficient amount of data")
 	exit(1)
 
+plt.plot(sensor_dataset.iloc[101:SIZE,:][[S]], label="unmodified")
+
 ### FIRST Artificial change
 change = []
 ### the start and end index is included in df slicing
@@ -146,6 +148,10 @@ sensor_dataset = pd.concat([sensor_dataset.loc[:startind-1],
 	sensor_dataset.loc[endind+1:]],
 	ignore_index=True)
 
+plt.plot(sensor_dataset.iloc[101:SIZE,:][[S]], label="modified")
+plt.legend()
+plt.savefig("results/artificial_change_"+kernel_dir+"_"+S+"_"+policyName+"_"+str(W)+".png")
+
 def getNewX(data):
 	return data[['Temp.','Humidity']].values
 
@@ -159,10 +165,10 @@ elif policyName=="policyC":
 elif policyName=="policyOST":
     err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, theta = 1, B = ostPenalty)
 elif policyName=="policyR":
-	sensor_dataset = im().iloc[101:SIZE,:]
+	sensor_dataset = sensor_dataset.iloc[101:SIZE,:]
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S, probR=probR)
 else:
-	sensor_dataset = im().iloc[101:SIZE,:]
+	sensor_dataset = sensor_dataset.iloc[101:SIZE,:]
 	err_diff, err_storage, init_err, comm = applyPolicy(W, sensor_dataset, get_model, get_error, getNewX, getNewY, S)
 
 waiting_time = calc_t(comm)
